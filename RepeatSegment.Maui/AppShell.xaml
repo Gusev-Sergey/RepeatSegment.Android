@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:pages="clr-namespace:RepeatSegment.Maui.Pages"
+       x:Class="RepeatSegment.Maui.AppShell"
+       Title="RepeatSegment"
+       Shell.FlyoutBehavior="Disabled"
+       Shell.NavBarIsVisible="True"
+       Shell.BackgroundColor="#1E1E1E"
+       Shell.ForegroundColor="#E0E0E0"
+       Shell.TitleColor="#E0E0E0">
+
+   <Shell.ToolbarItems>
+       <ToolbarItem Text="☰ Menu" Order="Primary"
+                    Clicked="OnMenuClicked" />
+   </Shell.ToolbarItems>
+
+    <ShellContent Route="player"
+                  ContentTemplate="{DataTemplate pages:PlayerPage}" />
+
+    <ShellContent Route="menu"
+                  ContentTemplate="{DataTemplate pages:MenuPage}"
+                  Shell.NavBarIsVisible="False" />
+
+    <ShellContent Route="settings"
+                  ContentTemplate="{DataTemplate pages:SettingsPage}" />
+</Shell>

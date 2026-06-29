@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RepeatSegment.Maui.Pages.MenuPage"
+             Title="Menu"
+             BackgroundColor="#121212"
+             Shell.NavBarIsVisible="False">
+
+    <Grid RowDefinitions="Auto,*,Auto" Padding="0">
+
+        <!-- Header -->
+        <Grid Grid.Row="0" BackgroundColor="#1A1A2E" Padding="20,30,20,16">
+            <VerticalStackLayout Spacing="4">
+                <Label Text="RepeatSegment" FontSize="24" FontAttributes="Bold"
+                       TextColor="#E0E0E0" />
+                <Label Text="Smart Audio Segment Repeater" FontSize="12"
+                       TextColor="#888" />
+            </VerticalStackLayout>
+        </Grid>
+
+        <!-- Scrollable menu -->
+        <ScrollView Grid.Row="1" Padding="0,8">
+            <VerticalStackLayout Spacing="4">
+
+                <!-- ── Navigation ── -->
+                <Frame Padding="0" Margin="12,4" CornerRadius="12"
+                       BackgroundColor="#1E1E2E" BorderColor="Transparent" HasShadow="False">
+                    <VerticalStackLayout>
+                        <!-- Player -->
+                        <Grid Padding="16,14" ColumnDefinitions="Auto,*,Auto"
+                              BackgroundColor="Transparent">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnPlayerTapped" />
+                            </Grid.GestureRecognizers>
+                            <Label Grid.Column="0" Text="▶" FontSize="18"
+                                   TextColor="#00B4A6" VerticalOptions="Center"
+                                   WidthRequest="32" />
+                            <Label Grid.Column="1" Text="Player" FontSize="16"
+                                   TextColor="#E0E0E0" VerticalOptions="Center" />
+                            <Label Grid.Column="2" Text="→" FontSize="16"
+                                   TextColor="#555" VerticalOptions="Center" />
+                        </Grid>
+                        <BoxView HeightRequest="0.5" Color="#2A2A3E" Margin="48,0,12,0" />
+                        <!-- Settings -->
+                        <Grid Padding="16,14" ColumnDefinitions="Auto,*,Auto"
+                              BackgroundColor="Transparent">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnSettingsTapped" />
+                            </Grid.GestureRecognizers>
+                            <Label Grid.Column="0" Text="⚙️" FontSize="18"
+                                   VerticalOptions="Center" WidthRequest="32" />
+                            <Label Grid.Column="1" Text="Settings" FontSize="16"
+                                   TextColor="#E0E0E0" VerticalOptions="Center" />
+                            <Label Grid.Column="2" Text="→" FontSize="16"
+                                   TextColor="#555" VerticalOptions="Center" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- ── File Section ── -->
+                <Frame Padding="0" Margin="12,4" CornerRadius="12"
+                       BackgroundColor="#1E1E2E" BorderColor="Transparent" HasShadow="False">
+                    <VerticalStackLayout>
+                        <Grid Padding="16,14" ColumnDefinitions="Auto,*,Auto"
+                              BackgroundColor="Transparent">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnToggleFile" />
+                            </Grid.GestureRecognizers>
+                            <Label Grid.Column="0" Text="📁" FontSize="20"
+                                   VerticalOptions="Center" WidthRequest="32" />
+                            <Label Grid.Column="1" Text="File" FontSize="16"
+                                   TextColor="#E0E0E0" VerticalOptions="Center" />
+                            <Label x:Name="LblFileArrow" Grid.Column="2" Text="▸" FontSize="14"
+                                   TextColor="#888" VerticalOptions="Center" />
+                        </Grid>
+                        <VerticalStackLayout x:Name="SecFile" IsVisible="False" Padding="0,0,0,8">
+                            <BoxView HeightRequest="0.5" Color="#2A2A3E" Margin="48,0,12,4" />
+                            <Label Text="  📂  Load Audio" Padding="16,10" FontSize="14"
+                                   TextColor="#CCC" BackgroundColor="Transparent">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnLoadClicked" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                            <BoxView HeightRequest="0.5" Color="#2A2A3E" Margin="48,0,12,4" />
+                            <Label x:Name="LblNoRecent" Text="  (no recent files)" Padding="16,10"
+                                   FontSize="12" TextColor="#666" BackgroundColor="Transparent" />
+                            <VerticalStackLayout x:Name="RecentList" />
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- ── Segment Duration Section ── -->
+                <Frame Padding="0" Margin="12,4" CornerRadius="12"
+                       BackgroundColor="#1E1E2E" BorderColor="Transparent" HasShadow="False">
+                    <VerticalStackLayout>
+                        <Grid Padding="16,14" ColumnDefinitions="Auto,*,Auto"
+                              BackgroundColor="Transparent">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnToggleSegDuration" />
+                            </Grid.GestureRecognizers>
+                            <Label Grid.Column="0" Text="⏱" FontSize="20"
+                                   VerticalOptions="Center" WidthRequest="32" />
+                            <Label Grid.Column="1" Text="Segment Duration" FontSize="16"
+                                   TextColor="#E0E0E0" VerticalOptions="Center" />
+                            <Label x:Name="LblSegDurArrow" Grid.Column="2" Text="▸" FontSize="14"
+                                   TextColor="#888" VerticalOptions="Center" />
+                        </Grid>
+                        <VerticalStackLayout x:Name="SecSegDur" IsVisible="False" Padding="0,0,0,8">
+                            <BoxView HeightRequest="0.5" Color="#2A2A3E" Margin="48,0,12,4" />
+                            <Label x:Name="LblSeg2" Text="  2 sec" Padding="16,10" FontSize="14"
+                                   TextColor="#CCC" BackgroundColor="Transparent">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnSeg2Clicked" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                            <Label x:Name="LblSeg5" Text="✓  5 sec" Padding="16,10" FontSize="14"
+                                   TextColor="#00B4A6" BackgroundColor="Transparent">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnSeg5Clicked" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                            <Label x:Name="LblSeg10" Text="  10 sec" Padding="16,10" FontSize="14"
+                                   TextColor="#CCC" BackgroundColor="Transparent">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnSeg10Clicked" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                            <Label x:Name="LblSeg20" Text="  20 sec" Padding="16,10" FontSize="14"
+                                   TextColor="#CCC" BackgroundColor="Transparent">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnSeg20Clicked" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                            <Label Text="  ✏️  Custom..." Padding="16,10" FontSize="14"
+                                   TextColor="#CCC" BackgroundColor="Transparent">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnSegCustomClicked" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- ── Transcription Section ── -->
+                <Frame Padding="0" Margin="12,4" CornerRadius="12"
+                       BackgroundColor="#1E1E2E" BorderColor="Transparent" HasShadow="False">
+                    <VerticalStackLayout>
+                        <Grid Padding="16,14" ColumnDefinitions="Auto,*,Auto"
+                              BackgroundColor="Transparent">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnToggleTranscription" />
+                            </Grid.GestureRecognizers>
+                            <Label Grid.Column="0" Text="📝" FontSize="20"
+                                   VerticalOptions="Center" WidthRequest="32" />
+                            <Label Grid.Column="1" Text="Transcription" FontSize="16"
+                                   TextColor="#E0E0E0" VerticalOptions="Center" />
+                            <Label x:Name="LblTransArrow" Grid.Column="2" Text="▸" FontSize="14"
+                                   TextColor="#888" VerticalOptions="Center" />
+                        </Grid>
+                        <VerticalStackLayout x:Name="SecTrans" IsVisible="False" Padding="0,0,0,8">
+                            <BoxView HeightRequest="0.5" Color="#2A2A3E" Margin="48,0,12,4" />
+                            <Label Text="  📥  Load from cache" Padding="16,10" FontSize="14"
+                                   TextColor="#CCC" BackgroundColor="Transparent">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnTranscribeCache" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                            <Label Text="  🌐  Request from API" Padding="16,10" FontSize="14"
+                                   TextColor="#CCC" BackgroundColor="Transparent">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnTranscribeApi" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- ── About ── -->
+                <Frame Padding="0" Margin="12,4" CornerRadius="12"
+                       BackgroundColor="#1E1E2E" BorderColor="Transparent" HasShadow="False">
+                    <Grid Padding="16,14" ColumnDefinitions="Auto,*"
+                          BackgroundColor="Transparent">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnAboutClicked" />
+                        </Grid.GestureRecognizers>
+                        <Label Grid.Column="0" Text="ℹ️" FontSize="20"
+                               VerticalOptions="Center" WidthRequest="32" />
+                        <Label Grid.Column="1" Text="About" FontSize="16"
+                               TextColor="#E0E0E0" VerticalOptions="Center" />
+                    </Grid>
+                </Frame>
+
+                <!-- Spacer -->
+                <BoxView HeightRequest="16" Color="Transparent" />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Footer -->
+        <Label Grid.Row="2" Text="v1.0.0 · AstrorumArbor © 2026"
+               FontSize="11" TextColor="#555" Padding="16,12"
+               BackgroundColor="#1A1A2E" HorizontalTextAlignment="Center" />
+    </Grid>
+
+</ContentPage>

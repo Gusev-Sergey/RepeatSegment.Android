@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RepeatSegment.Maui.Pages.SettingsPage"
+             Title="Settings"
+             BackgroundColor="#121212">
+
+    <Grid RowDefinitions="Auto,*" Padding="0">
+        <!-- Header -->
+        <Grid Grid.Row="0" BackgroundColor="#1A1A2E" Padding="20,30,20,16">
+            <Label Text="Settings" FontSize="22" FontAttributes="Bold"
+                   TextColor="#E0E0E0" />
+        </Grid>
+
+        <ScrollView Grid.Row="1" Padding="12,8">
+            <VerticalStackLayout Spacing="6">
+
+                <!-- ── API Keys ── -->
+                <Frame Padding="16,12" CornerRadius="12"
+                       BackgroundColor="#1E1E2E" BorderColor="Transparent" HasShadow="False">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="🔑 API Keys" FontSize="16" FontAttributes="Bold" TextColor="#E0E0E0"/>
+                        <BoxView HeightRequest="0.5" Color="#2A2A3E"/>
+                        <HorizontalStackLayout Spacing="8">
+                            <CheckBox x:Name="CbDeepgram" IsChecked="True" Color="#00B4A6"
+                                       BackgroundColor="Transparent" />
+                            <Label Text="Deepgram" TextColor="#CCC" FontSize="13" VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+                        <Entry x:Name="EntryDeepgramKey" Placeholder="Deepgram API Key" PlaceholderColor="#555"
+                               TextColor="#E0E0E0" BackgroundColor="#2A2A3E" FontSize="13" IsPassword="True"/>
+                        <HorizontalStackLayout Spacing="8">
+                            <CheckBox x:Name="CbAssemblyAi" IsChecked="False" Color="#00B4A6"
+                                       BackgroundColor="Transparent" />
+                            <Label Text="AssemblyAI" TextColor="#CCC" FontSize="13" VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+                        <Entry x:Name="EntryAssemblyAiKey" Placeholder="AssemblyAI API Key" PlaceholderColor="#555"
+                               TextColor="#E0E0E0" BackgroundColor="#2A2A3E" FontSize="13" IsPassword="True"/>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- ── Translation ── -->
+                <Frame Padding="16,12" CornerRadius="12"
+                       BackgroundColor="#1E1E2E" BorderColor="Transparent" HasShadow="False">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="🌐 Translation" FontSize="16" FontAttributes="Bold" TextColor="#E0E0E0"/>
+                        <BoxView HeightRequest="0.5" Color="#2A2A3E"/>
+                        <RadioButton x:Name="RbGoogle" Content="Google Translate (free)" TextColor="#E0E0E0"
+                                     IsChecked="True" CheckedChanged="OnTranslationChanged" GroupName="trans"
+                                     BackgroundColor="Transparent"/>
+                        <RadioButton x:Name="RbYandex" Content="Yandex.Translate" TextColor="#E0E0E0"
+                                     CheckedChanged="OnTranslationChanged" GroupName="trans"
+                                     BackgroundColor="Transparent"/>
+                        <VerticalStackLayout x:Name="PanelYandex" IsVisible="False" Spacing="6">
+                            <Entry x:Name="EntryYandexKey" Placeholder="Yandex API Key" PlaceholderColor="#555"
+                                   TextColor="#E0E0E0" BackgroundColor="#2A2A3E" FontSize="13" IsPassword="True"/>
+                            <Entry x:Name="EntryYandexFolder" Placeholder="Yandex Folder ID" PlaceholderColor="#555"
+                                   TextColor="#E0E0E0" BackgroundColor="#2A2A3E" FontSize="13"/>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- ── General ── -->
+                <Frame Padding="16,12" CornerRadius="12"
+                       BackgroundColor="#1E1E2E" BorderColor="Transparent" HasShadow="False">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="⚙️ General" FontSize="16" FontAttributes="Bold" TextColor="#E0E0E0"/>
+                        <BoxView HeightRequest="0.5" Color="#2A2A3E"/>
+                        <Grid ColumnDefinitions="120,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="8">
+                            <Label Grid.Row="0" Grid.Column="0" Text="UI Language:" TextColor="#CCC" FontSize="13" VerticalOptions="Center"/>
+                            <Picker Grid.Row="0" Grid.Column="1" x:Name="PckUiLang" TextColor="#E0E0E0" BackgroundColor="#2A2A3E" FontSize="13"/>
+                            <Label Grid.Row="1" Grid.Column="0" Text="Transcription:" TextColor="#CCC" FontSize="13" VerticalOptions="Center"/>
+                            <Picker Grid.Row="1" Grid.Column="1" x:Name="PckTransLang" TextColor="#E0E0E0" BackgroundColor="#2A2A3E" FontSize="13"/>
+                            <Label Grid.Row="2" Grid.Column="0" Text="Chunk minutes:" TextColor="#CCC" FontSize="13" VerticalOptions="Center"/>
+                            <Entry Grid.Row="2" Grid.Column="1" x:Name="EntryChunk" Text="10" Keyboard="Numeric"
+                                   TextColor="#E0E0E0" BackgroundColor="#2A2A3E" FontSize="13"/>
+                            <Label Grid.Row="3" Grid.Column="0" Text="Highlight latency:" TextColor="#CCC" FontSize="13" VerticalOptions="Center"/>
+                            <Entry Grid.Row="3" Grid.Column="1" x:Name="EntryLatency" Text="0.32" Keyboard="Numeric"
+                                   TextColor="#E0E0E0" BackgroundColor="#2A2A3E" FontSize="13"/>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- ── Anki ── -->
+                <Frame Padding="16,12" CornerRadius="12"
+                       BackgroundColor="#1E1E2E" BorderColor="Transparent" HasShadow="False">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="🃏 Anki Export" FontSize="16" FontAttributes="Bold" TextColor="#E0E0E0"/>
+                        <BoxView HeightRequest="0.5" Color="#2A2A3E"/>
+                        <Grid ColumnDefinitions="120,*" RowDefinitions="Auto,Auto" RowSpacing="8">
+                            <Label Grid.Row="0" Grid.Column="0" Text="MP3 bitrate:" TextColor="#CCC" FontSize="13" VerticalOptions="Center"/>
+                            <Picker Grid.Row="0" Grid.Column="1" x:Name="PckMp3Bitrate" TextColor="#E0E0E0" BackgroundColor="#2A2A3E" FontSize="13"/>
+                            <Label Grid.Row="1" Grid.Column="0" Text="Image search:" TextColor="#CCC" FontSize="13" VerticalOptions="Center"/>
+                            <Picker Grid.Row="1" Grid.Column="1" x:Name="PckImageProvider" TextColor="#E0E0E0" BackgroundColor="#2A2A3E" FontSize="13"/>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Save -->
+                <Button Text="💾 Save Settings" FontSize="16" FontAttributes="Bold"
+                        Clicked="OnSaveClicked"
+                        BackgroundColor="#00B4A6" TextColor="White"
+                        CornerRadius="8" HeightRequest="48" Margin="4,12,4,4"/>
+                <BoxView HeightRequest="24" Color="Transparent"/>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

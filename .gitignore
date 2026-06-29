@@ -1,0 +1,13 @@
+bin/
+obj/
+.idea/
+*.user
+*.suo
+*.iml
+.vs/
+.DS_Store
+Thumbs.db
+packages/
+*.apk
+*.aab
+*.idsig
