@@ -127,6 +127,36 @@ IDispatcherTimer ScrollTimer 700ms
 
 ---
 
+## РЕШЕНО: Audio Focus (30.06.2026, 15 итераций)
+
+### Симптомы
+При звонке плеер продолжал играть в фоне. После звонка кнопки Play не работали.
+
+### Причина
+Аудиофокус запрашивался на каждое нажатие Play через `AudioFocusRequestClass`, что каждый раз разрушало предыдущий запрос. Коллбек `OnAudioFocusChange` не доходил.
+
+### Правильное решение (v15)
+**Legacy API** (`AudioManager.RequestAudioFocus(listener, Stream.Music, Gain)`) вместо `AudioFocusRequestClass`. FocusListener создаётся **один раз в конструкторе** и живёт весь жизненный цикл страницы.
+
+- `focus_loss` → `_audio.Pause()` (AudioTrack жив, не разрушается)
+- `focus_gain` → `_audio.Resume()` (новый метод в AudioEngine) + `StartTm()` + `UpdateSkinsPlaying()`
+- Добавлен метод `AudioEngine.Resume()` — `_audioTrack.Play()` после `Pause()`
+
+### Что НЕ сработало (14 попыток)
+1. FocusListener в PlaybackService → GC собирал
+2. `AudioFocusRequestClass` → ненадёжные биндинги .NET
+3. `_audio.Stop()` → разрушал AudioTrack, Play не восстанавливался
+4. `_audio.Pause()` без Resume → трек зависал
+5. `_pausedByCall` флаг → блокировал Play навсегда
+6. `focus_gain` трогал `_pop` → Play шёл в STOP-ветку
+7. PlaybackBridge → асинхронная доставка терялась
+8-14. Различные комбинации Stop/Pause/флагов
+
+### Ключевой инсайт
+`AudioFocusRequestClass` в .NET Android биндингах нестабилен. Legacy `RequestAudioFocus(IOnAudioFocusChangeListener, Stream, AudioFocus)` работает надёжно. Стандартная модель YouTube/Spotify: Pause при потере → Resume при возврате.
+
+---
+
 ## РЕШЕНО: Скролл транскрипции с центрированием подсветки (30.06.2026)
 
 ### Симптомы
@@ -164,7 +194,6 @@ IDispatcherTimer ScrollTimer 700ms
 
 ## НЕ СДЕЛАНЫ: Задачи из PLAN_PORTING.md
 
-- Audio Focus
 - TranslationProvider интеграция
 - AnkiCardPage
 - TtsProvider кнопка

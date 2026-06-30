@@ -16,6 +16,7 @@ public class PlaybackService : Service
     private MediaSession? _session;
     private AudioManager? _audioManager;
     private AudioFocusRequestClass? _focusRequest;
+    private FocusListener? _focusListener;
     private bool _hasAudioFocus;
 
     public override void OnCreate()
@@ -70,15 +71,17 @@ public class PlaybackService : Service
                 .SetUsage(AudioUsageKind.Media)!
                 .SetContentType(AudioContentType.Music)!
                 .Build()!;
+            _focusListener = new FocusListener();
             var builder = new AudioFocusRequestClass.Builder(AudioFocus.Gain);
             builder.SetAudioAttributes(attr);
-            builder.SetOnAudioFocusChangeListener(new FocusListener());
+            builder.SetOnAudioFocusChangeListener(_focusListener);
             _focusRequest = builder.Build();
             _hasAudioFocus = _audioManager.RequestAudioFocus(_focusRequest) == AudioFocusRequest.Granted;
         }
         else
         {
-            _hasAudioFocus = _audioManager.RequestAudioFocus(new FocusListener(),
+            _focusListener = new FocusListener();
+            _hasAudioFocus = _audioManager.RequestAudioFocus(_focusListener,
                 Android.Media.Stream.Music, AudioFocus.Gain) == AudioFocusRequest.Granted;
         }
     }
@@ -88,8 +91,8 @@ public class PlaybackService : Service
         if (_audioManager == null || !_hasAudioFocus) return;
         if (Build.VERSION.SdkInt >= BuildVersionCodes.O && _focusRequest != null)
             _audioManager.AbandonAudioFocusRequest(_focusRequest);
-        else
-            _audioManager.AbandonAudioFocus(new FocusListener());
+        else if (_focusListener != null)
+            _audioManager.AbandonAudioFocus(_focusListener);
         _hasAudioFocus = false;
     }
 

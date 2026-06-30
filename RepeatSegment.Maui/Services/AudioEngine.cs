@@ -501,6 +501,19 @@ public class AudioEngine : IDisposable
         Log.Info("[INFO] Playback paused");
     }
 
+    /// <summary>Resume playback after Pause().</summary>
+    public void Resume()
+    {
+        if (_audioTrack == null || IsDisposed)
+            return;
+        if (!_isPaused)
+            return;
+
+        _isPaused = false;
+        _audioTrack.Play();
+        Log.Info("[INFO] Playback resumed");
+    }
+
     /// <summary>Stop playback and reset.</summary>
     public void Stop()
     {
