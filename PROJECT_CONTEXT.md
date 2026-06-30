@@ -127,6 +127,30 @@ IDispatcherTimer ScrollTimer 700ms
 
 ---
 
+## РЕШЕНО: Скролл транскрипции с центрированием подсветки (30.06.2026)
+
+### Симптомы
+Подсвеченное слово уходило вверх за пределы экрана.
+
+### Причина
+Ручной расчёт ширины символов (`cw`) и переносов строк не совпадал с реальным MAUI-рендером.
+
+### Правильное решение
+**Пропорциональная позиция**: `(charIndex / totalChars) * LblTranscription.Height`. Использует точную высоту Label, уже вычисленную MAUI.
+
+- `_prevScrollOffset` с гистерезисом 3px
+- Плавный скролл `animated: true`
+- Не требует `cw`, `textW`, `_wordLineNumbers`
+
+### Попытки (не сработали)
+1. `cw=9.8`, `textW=dispW-48`, `_lineHeight=22` — недоскролл
+2. `cw=10.5`, `textW=dispW-56`, `_lineHeight=24` — недоскролл
+3. `Android.Text.StaticLayout` — неправильные строки
+4. `_scrollCalibrator` каждые 5s — неэффективен
+5. `_prevScrollLine` guard — позиции строк неверны
+
+---
+
 ## Foreground Service + MediaSession: РАБОТАЕТ
 
 Исправлены краши `MissingForegroundServiceTypeException` и `foregroundServiceType 0x01 != 0x02`. Сервис запускается, уведомление показывается, кнопки MediaSession (play/pause/next/prev) связаны через `PlaybackBridge`.
