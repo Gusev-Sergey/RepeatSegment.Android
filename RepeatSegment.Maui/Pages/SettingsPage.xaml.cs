@@ -33,8 +33,8 @@ theme = dark
 
 [Transcription]
 providers_enabled = deepgram
-assemblyai_api_key =
-deepgram_api_key =
+assemblyai_api_key = 5d343a133e014d3c866928299bc267f0
+deepgram_api_key = 5f8efa436c8b19dc254bf10187621eb3dc988ac5
 yandex_translate_api_key =
 yandex_translate_folder_id =
 translation_provider = google
