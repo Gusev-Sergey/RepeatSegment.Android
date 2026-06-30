@@ -1,0 +1,570 @@
+{
+  "communities": {
+    "0": [
+      "audiomanager",
+      "double",
+      "handler",
+      "idispatchertimer",
+      "l",
+      "pages_playerpage_xaml_playerpage",
+      "pages_playerpage_xaml_playerpage_apdef",
+      "pages_playerpage_xaml_playerpage_btn",
+      "pages_playerpage_xaml_playerpage_buildwl",
+      "pages_playerpage_xaml_playerpage_chkcache",
+      "pages_playerpage_xaml_playerpage_chvol",
+      "pages_playerpage_xaml_playerpage_fmt",
+      "pages_playerpage_xaml_playerpage_getam",
+      "pages_playerpage_xaml_playerpage_hlwordbg",
+      "pages_playerpage_xaml_playerpage_loadfile",
+      "pages_playerpage_xaml_playerpage_onappearing",
+      "pages_playerpage_xaml_playerpage_oncollapseclicked",
+      "pages_playerpage_xaml_playerpage_onfirstclicked",
+      "pages_playerpage_xaml_playerpage_onlastclicked",
+      "pages_playerpage_xaml_playerpage_onloadmenuclicked",
+      "pages_playerpage_xaml_playerpage_onnextclicked",
+      "pages_playerpage_xaml_playerpage_onplaybackcmd",
+      "pages_playerpage_xaml_playerpage_onplayclicked",
+      "pages_playerpage_xaml_playerpage_onplaygoclicked",
+      "pages_playerpage_xaml_playerpage_onprevclicked",
+      "pages_playerpage_xaml_playerpage_onrepeatclicked",
+      "pages_playerpage_xaml_playerpage_onsegmentdurationcustom",
+      "pages_playerpage_xaml_playerpage_onsliderdragcompleted",
+      "pages_playerpage_xaml_playerpage_onsliderdragstarted",
+      "pages_playerpage_xaml_playerpage_onslidervaluechanged",
+      "pages_playerpage_xaml_playerpage_onspeedchanged",
+      "pages_playerpage_xaml_playerpage_ontranscribeapi",
+      "pages_playerpage_xaml_playerpage_ontranscribecache",
+      "pages_playerpage_xaml_playerpage_onvoldownclicked",
+      "pages_playerpage_xaml_playerpage_onvolupclicked",
+      "pages_playerpage_xaml_playerpage_onwaveformtouch",
+      "pages_playerpage_xaml_playerpage_pick",
+      "pages_playerpage_xaml_playerpage_requestaudiofocusviaservice",
+      "pages_playerpage_xaml_playerpage_schedulerender",
+      "pages_playerpage_xaml_playerpage_showtd",
+      "pages_playerpage_xaml_playerpage_skip",
+      "pages_playerpage_xaml_playerpage_startplay",
+      "pages_playerpage_xaml_playerpage_startplayi",
+      "pages_playerpage_xaml_playerpage_starttm",
+      "pages_playerpage_xaml_playerpage_stopplay",
+      "pages_playerpage_xaml_playerpage_stoptm",
+      "pages_playerpage_xaml_playerpage_triggerload",
+      "pages_playerpage_xaml_playerpage_uitick",
+      "pages_playerpage_xaml_playerpage_updateseg",
+      "pages_playerpage_xaml_playerpage_updatesegmentduration",
+      "pages_playerpage_xaml_playerpage_updateskinsplaying",
+      "pages_playerpage_xaml_playerpage_updateskinsstopped",
+      "pages_playerpage_xaml_playerpage_w",
+      "r",
+      "silencedetector",
+      "skfont",
+      "skpaint",
+      "skpatheffect",
+      "sktoucheventargs",
+      "task",
+      "timer",
+      "transcriptionprovider",
+      "valuechangedeventargs",
+      "w"
+    ],
+    "1": [
+      "audiotrack",
+      "decoderesult",
+      "float",
+      "idisposable",
+      "long",
+      "services_audioengine_audioengine",
+      "services_audioengine_audioengine_decodeaudiofile",
+      "services_audioengine_audioengine_dispose",
+      "services_audioengine_audioengine_extractchunk",
+      "services_audioengine_audioengine_floatstopcm16",
+      "services_audioengine_audioengine_getcurrentposition",
+      "services_audioengine_audioengine_getplaysamples",
+      "services_audioengine_audioengine_getplaysamplestoend",
+      "services_audioengine_audioengine_getplotsamples",
+      "services_audioengine_audioengine_getsamples",
+      "services_audioengine_audioengine_load",
+      "services_audioengine_audioengine_pause",
+      "services_audioengine_audioengine_play",
+      "services_audioengine_audioengine_playsegment",
+      "services_audioengine_audioengine_resume",
+      "services_audioengine_audioengine_savesnippetmp3",
+      "services_audioengine_audioengine_savesnippetwav",
+      "services_audioengine_audioengine_seek",
+      "services_audioengine_audioengine_shortstobytes",
+      "services_audioengine_audioengine_stop",
+      "services_audioengine_audioengine_stopplaybackinternal",
+      "services_audioengine_audioengine_stretchnaive",
+      "services_audioengine_audioengine_stretchsola",
+      "services_audioengine_audioengine_writewavfile",
+      "services_audioengine_log_info",
+      "short"
+    ],
+    "2": [
+      "ankibuilder_ankibuilder",
+      "ankiexportmanager_ankiexportmanager",
+      "build_log_doc",
+      "configmanager_configmanager",
+      "maui_debug_notes_doc",
+      "nuget_microsoft_data_sqlite",
+      "nuget_microsoft_maui_controls",
+      "nuget_microsoft_maui_controls_compatibility",
+      "nuget_skiasharp_views_maui_controls",
+      "nuget_system_net_http_json",
+      "pages_menupage_xaml",
+      "pages_playerpage_xaml",
+      "plan_porting_doc",
+      "playerpage_xaml",
+      "project_context_doc",
+      "repeatsegment_maui_build_release",
+      "repeatsegment_maui_repeatsegment_maui",
+      "repeatsegment_maui_repeatsegment_maui_csproj_framework_net9_0_android",
+      "repeatsegment_maui_repeatsegment_maui_csproj_sdk_microsoft_net_sdk",
+      "services_audioengine",
+      "silencedetector_silencedetector",
+      "strings_strings",
+      "transcriptionprovider_transcriptionprovider",
+      "translationprovider_translationprovider",
+      "ttsprovider_ttsprovider",
+      "volume_widget_wpf_volumewidget",
+      "waveform_attack_plan_doc",
+      "waveform_diagnosis_doc",
+      "waveform_solution_doc",
+      "waveformgraph_wpf_waveformgraph"
+    ],
+    "3": [
+      "action",
+      "eventargs",
+      "pages_menupage_xaml_menupage",
+      "pages_menupage_xaml_menupage_buildrecentmenu",
+      "pages_menupage_xaml_menupage_navigateanddo",
+      "pages_menupage_xaml_menupage_onaboutclicked",
+      "pages_menupage_xaml_menupage_onloadclicked",
+      "pages_menupage_xaml_menupage_onplayertapped",
+      "pages_menupage_xaml_menupage_onseg10clicked",
+      "pages_menupage_xaml_menupage_onseg20clicked",
+      "pages_menupage_xaml_menupage_onseg2clicked",
+      "pages_menupage_xaml_menupage_onseg5clicked",
+      "pages_menupage_xaml_menupage_onsegcustomclicked",
+      "pages_menupage_xaml_menupage_onsettingstapped",
+      "pages_menupage_xaml_menupage_ontogglefile",
+      "pages_menupage_xaml_menupage_ontogglesegduration",
+      "pages_menupage_xaml_menupage_ontoggletranscription",
+      "pages_menupage_xaml_menupage_ontranscribeapi",
+      "pages_menupage_xaml_menupage_ontranscribecache",
+      "pages_menupage_xaml_menupage_setduration",
+      "pages_menupage_xaml_menupage_setsegcheckmark",
+      "repeatsegment_maui_appshell_xaml",
+      "repeatsegment_maui_appshell_xaml_appshell",
+      "repeatsegment_maui_appshell_xaml_appshell_onmenuclicked",
+      "shell"
+    ],
+    "4": [
+      "android_mainapplication",
+      "android_mainapplication_mainapplication",
+      "android_mainapplication_mainapplication_createmauiapp",
+      "ios_appdelegate",
+      "ios_appdelegate_appdelegate",
+      "ios_appdelegate_appdelegate_createmauiapp",
+      "maccatalyst_appdelegate",
+      "maccatalyst_appdelegate_appdelegate",
+      "maccatalyst_appdelegate_appdelegate_createmauiapp",
+      "mauiapp",
+      "mauiapplication",
+      "mauiuiapplicationdelegate",
+      "mauiwinuiapplication",
+      "repeatsegment_maui_mauiprogram",
+      "repeatsegment_maui_mauiprogram_mauiprogram",
+      "repeatsegment_maui_mauiprogram_mauiprogram_createmauiapp",
+      "tizen_main",
+      "tizen_main_program",
+      "tizen_main_program_createmauiapp",
+      "tizen_main_program_main",
+      "windows_app_xaml",
+      "windows_app_xaml_app",
+      "windows_app_xaml_app_createmauiapp"
+    ],
+    "5": [
+      "audiofocus",
+      "callback",
+      "context",
+      "ionaudiofocuschangelistener",
+      "object",
+      "pages_playerpage_xaml_playerfocuslistener",
+      "pages_playerpage_xaml_playerfocuslistener_onaudiofocuschange",
+      "services_playbackservice",
+      "services_playbackservice_focuslistener",
+      "services_playbackservice_focuslistener_onaudiofocuschange",
+      "services_playbackservice_playbackbridge",
+      "services_playbackservice_playbackbridge_post",
+      "services_playbackservice_playbackservicemanager",
+      "services_playbackservice_playbackservicemanager_init",
+      "services_playbackservice_playbackservicemanager_start",
+      "services_playbackservice_playbackservicemanager_stop",
+      "services_playbackservice_sessioncb",
+      "services_playbackservice_sessioncb_onpause",
+      "services_playbackservice_sessioncb_onplay",
+      "services_playbackservice_sessioncb_onskiptonext",
+      "services_playbackservice_sessioncb_onskiptoprevious",
+      "services_playbackservice_sessioncb_onstop"
+    ],
+    "6": [
+      "audiofocusrequestclass",
+      "bool",
+      "ibinder",
+      "int",
+      "intent",
+      "mediasession",
+      "notification",
+      "service",
+      "services_playbackservice_playbackservice",
+      "services_playbackservice_playbackservice_abandonaudiofocus",
+      "services_playbackservice_playbackservice_buildnotification",
+      "services_playbackservice_playbackservice_createchannel",
+      "services_playbackservice_playbackservice_onbind",
+      "services_playbackservice_playbackservice_oncreate",
+      "services_playbackservice_playbackservice_ondestroy",
+      "services_playbackservice_playbackservice_onstartcommand",
+      "services_playbackservice_playbackservice_requestaudiofocus",
+      "services_playbackservice_playbackservice_update",
+      "startcommandflags",
+      "startcommandresult"
+    ],
+    "7": [
+      "checkedchangedeventargs",
+      "configmanager",
+      "contentpage",
+      "pages_settingspage_xaml",
+      "pages_settingspage_xaml_settingspage",
+      "pages_settingspage_xaml_settingspage_ensureconfigfileexists",
+      "pages_settingspage_xaml_settingspage_loadfromconfig",
+      "pages_settingspage_xaml_settingspage_onsaveclicked",
+      "pages_settingspage_xaml_settingspage_ontranslationchanged",
+      "pages_settingspage_xaml_settingspage_populatepickers",
+      "repeatsegment_maui_mainpage_xaml",
+      "repeatsegment_maui_mainpage_xaml_mainpage"
+    ],
+    "8": [
+      "pages_playerpage_xaml_playerpage_drawcur",
+      "pages_playerpage_xaml_playerpage_drawhl",
+      "pages_playerpage_xaml_playerpage_drawlines",
+      "pages_playerpage_xaml_playerpage_drawpers",
+      "pages_playerpage_xaml_playerpage_drawr",
+      "pages_playerpage_xaml_playerpage_drawruler",
+      "pages_playerpage_xaml_playerpage_drawuser",
+      "pages_playerpage_xaml_playerpage_drawwave",
+      "pages_playerpage_xaml_playerpage_onwaveformpaint",
+      "skcanvas",
+      "skcolor",
+      "skpaintsurfaceeventargs"
+    ],
+    "9": [
+      "list",
+      "services_audioengine_log",
+      "services_audioengine_log_error",
+      "services_audioengine_log_warn",
+      "services_audioengine_log_writeline",
+      "services_recentmanager",
+      "services_recentmanager_recentmanager",
+      "services_recentmanager_recentmanager_addfile",
+      "services_recentmanager_recentmanager_load",
+      "services_recentmanager_recentmanager_save",
+      "string"
+    ],
+    "10": [
+      "activity",
+      "bundle",
+      "repeatsegment_droid_mainactivity",
+      "repeatsegment_droid_mainactivity_mainactivity",
+      "repeatsegment_droid_mainactivity_mainactivity_oncreate",
+      "repeatsegment_native_mainactivity",
+      "repeatsegment_native_mainactivity_mainactivity",
+      "repeatsegment_native_mainactivity_mainactivity_oncreate"
+    ],
+    "11": [
+      "application",
+      "iactivationstate",
+      "repeatsegment_maui_app_xaml",
+      "repeatsegment_maui_app_xaml_app",
+      "repeatsegment_maui_app_xaml_app_createwindow",
+      "window"
+    ],
+    "12": [
+      "aboutassets_loadmauiasset",
+      "filesystem_openapppackagefileasync",
+      "streamreader_ctor",
+      "streamreader_readtoend"
+    ],
+    "13": [
+      "aboutassets_document",
+      "aboutassets_mauiasset_buildaction",
+      "aboutassets_raw_resources_path"
+    ],
+    "14": [
+      "android_mainactivity",
+      "android_mainactivity_mainactivity",
+      "mauiappcompatactivity"
+    ],
+    "15": [
+      "ios_program",
+      "ios_program_program",
+      "ios_program_program_main"
+    ],
+    "16": [
+      "maccatalyst_program",
+      "maccatalyst_program_program",
+      "maccatalyst_program_program_main"
+    ],
+    "17": [
+      "repeatsegment_droid_repeatsegment_android",
+      "repeatsegment_droid_repeatsegment_android_csproj_framework_net9_0_android",
+      "repeatsegment_droid_repeatsegment_android_csproj_sdk_microsoft_net_sdk"
+    ],
+    "18": [
+      "repeatsegment_native_repeatsegment_native",
+      "repeatsegment_native_repeatsegment_native_csproj_framework_net9_0_android",
+      "repeatsegment_native_repeatsegment_native_csproj_sdk_microsoft_net_sdk"
+    ],
+    "19": [
+      "about_resources_doc"
+    ],
+    "20": [
+      "audioengine_wpf_audioengine"
+    ],
+    "21": [
+      "images_last"
+    ],
+    "22": [
+      "images_next_play"
+    ],
+    "23": [
+      "images_play"
+    ],
+    "24": [
+      "images_play_go"
+    ],
+    "25": [
+      "images_pre_play"
+    ],
+    "26": [
+      "images_repeat"
+    ],
+    "27": [
+      "images_stop_play"
+    ],
+    "28": [
+      "mipmap_hdpi_appicon"
+    ],
+    "29": [
+      "mipmap_mdpi_appicon"
+    ],
+    "30": [
+      "mipmap_xhdpi_appicon"
+    ],
+    "31": [
+      "readme_doc"
+    ],
+    "32": [
+      "repeatsegment_droid_resources_mipmap_hdpi_appicon"
+    ],
+    "33": [
+      "repeatsegment_droid_resources_mipmap_hdpi_appicon_background"
+    ],
+    "34": [
+      "repeatsegment_droid_resources_mipmap_hdpi_appicon_foreground"
+    ],
+    "35": [
+      "repeatsegment_droid_resources_mipmap_mdpi_appicon"
+    ],
+    "36": [
+      "repeatsegment_droid_resources_mipmap_xhdpi_appicon"
+    ],
+    "37": [
+      "repeatsegment_droid_resources_mipmap_xxhdpi_appicon"
+    ],
+    "38": [
+      "repeatsegment_droid_resources_mipmap_xxxhdpi_appicon"
+    ],
+    "39": [
+      "repeatsegment_maui_platforms_android_resources_mipmap_xxxhdpi_ic_launcher"
+    ],
+    "40": [
+      "repeatsegment_maui_platforms_android_resources_mipmap_xxxhdpi_ic_launcher_round"
+    ],
+    "41": [
+      "repeatsegment_maui_resources_appicon_appicon"
+    ],
+    "42": [
+      "repeatsegment_maui_resources_images_dotnet_bot"
+    ],
+    "43": [
+      "repeatsegment_maui_resources_images_first"
+    ],
+    "44": [
+      "resume_for_new_chat_doc"
+    ],
+    "45": [
+      "silencedetector_wpf_silencedetector"
+    ]
+  },
+  "cohesion": {
+    "0": 0.06448412698412699,
+    "1": 0.12688172043010754,
+    "2": 0.08505747126436781,
+    "3": 0.15333333333333332,
+    "4": 0.09486166007905138,
+    "5": 0.12987012987012986,
+    "6": 0.13157894736842105,
+    "7": 0.16666666666666666,
+    "8": 0.30303030303030304,
+    "9": 0.23636363636363636,
+    "10": 0.2857142857142857,
+    "11": 0.3333333333333333,
+    "12": 0.5,
+    "13": 0.6666666666666666,
+    "14": 0.6666666666666666,
+    "15": 0.6666666666666666,
+    "16": 0.6666666666666666,
+    "17": 0.6666666666666666,
+    "18": 0.6666666666666666,
+    "19": 1.0,
+    "20": 1.0,
+    "21": 1.0,
+    "22": 1.0,
+    "23": 1.0,
+    "24": 1.0,
+    "25": 1.0,
+    "26": 1.0,
+    "27": 1.0,
+    "28": 1.0,
+    "29": 1.0,
+    "30": 1.0,
+    "31": 1.0,
+    "32": 1.0,
+    "33": 1.0,
+    "34": 1.0,
+    "35": 1.0,
+    "36": 1.0,
+    "37": 1.0,
+    "38": 1.0,
+    "39": 1.0,
+    "40": 1.0,
+    "41": 1.0,
+    "42": 1.0,
+    "43": 1.0,
+    "44": 1.0,
+    "45": 1.0
+  },
+  "gods": [
+    {
+      "id": "pages_playerpage_xaml_playerpage",
+      "label": "PlayerPage",
+      "degree": 78
+    },
+    {
+      "id": "services_audioengine_audioengine",
+      "label": "AudioEngine",
+      "degree": 32
+    },
+    {
+      "id": "pages_menupage_xaml_menupage",
+      "label": "MenuPage",
+      "degree": 21
+    },
+    {
+      "id": "services_playbackservice_playbackservice",
+      "label": "PlaybackService",
+      "degree": 18
+    },
+    {
+      "id": "plan_porting_doc",
+      "label": "Porting Plan WPF \u2192 MAUI Android",
+      "degree": 15
+    },
+    {
+      "id": "pages_settingspage_xaml_settingspage",
+      "label": "SettingsPage",
+      "degree": 8
+    },
+    {
+      "id": "maui_debug_notes_doc",
+      "label": "MAUI Android Debug Notes",
+      "degree": 8
+    },
+    {
+      "id": "project_context_doc",
+      "label": "RepeatSegment Android \u2014 Project Context",
+      "degree": 8
+    },
+    {
+      "id": "services_audioengine_log",
+      "label": "Log",
+      "degree": 7
+    },
+    {
+      "id": "services_playbackservice_sessioncb",
+      "label": "SessionCb",
+      "degree": 7
+    }
+  ],
+  "surprises": [
+    {
+      "source": "Porting Plan WPF \u2192 MAUI Android",
+      "target": "VolumeWidget.cs (WPF)",
+      "source_files": [
+        "PLAN_PORTING.md",
+        "c:/ProjectsCSharp/RepeatSegment/RepeatSegment.App/VolumeWidget.cs"
+      ],
+      "confidence": "INFERRED",
+      "relation": "references",
+      "why": "inferred connection - not explicitly stated in source; crosses file types (doc \u2194 code); connects across different repos/directories; peripheral node `VolumeWidget.cs (WPF)` unexpectedly reaches hub `Porting Plan WPF \u2192 MAUI Android`"
+    },
+    {
+      "source": "Porting Plan WPF \u2192 MAUI Android",
+      "target": "WaveformGraph.cs (WPF)",
+      "source_files": [
+        "PLAN_PORTING.md",
+        "c:/ProjectsCSharp/RepeatSegment/RepeatSegment.App/WaveformGraph.cs"
+      ],
+      "confidence": "INFERRED",
+      "relation": "references",
+      "why": "inferred connection - not explicitly stated in source; crosses file types (doc \u2194 code); connects across different repos/directories; peripheral node `WaveformGraph.cs (WPF)` unexpectedly reaches hub `Porting Plan WPF \u2192 MAUI Android`"
+    },
+    {
+      "source": "RepeatSegment Android \u2014 Project Context",
+      "target": "Waveform Smooth Rendering \u2014 Solution",
+      "source_files": [
+        "PROJECT_CONTEXT.md",
+        "WAVEFORM_SOLUTION.md"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "connects across different repos/directories; peripheral node `Waveform Smooth Rendering \u2014 Solution` unexpectedly reaches hub `RepeatSegment Android \u2014 Project Context`"
+    },
+    {
+      "source": "RepeatSegment Android \u2014 Project Context",
+      "target": "Waveform Smooth Rendering \u2014 Attack Plan",
+      "source_files": [
+        "PROJECT_CONTEXT.md",
+        "WAVEFORM_ATTACK_PLAN.md"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "connects across different repos/directories"
+    },
+    {
+      "source": "RepeatSegment Android \u2014 Project Context",
+      "target": "Waveform Smooth Rendering \u2014 Diagnosis",
+      "source_files": [
+        "PROJECT_CONTEXT.md",
+        "WAVEFORM_DIAGNOSIS.md"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "connects across different repos/directories"
+    }
+  ],
+  "tokens": {
+    "input": 17810,
+    "output": 22544
+  }
+}

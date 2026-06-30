@@ -1,0 +1,127 @@
+{
+  "RepeatSegment.Droid/MainActivity.cs": {
+    "mtime": 1782589793.399875,
+    "ast_hash": "e4c8ec46d3b6cf709658234a15b4a246",
+    "semantic_hash": "e4c8ec46d3b6cf709658234a15b4a246"
+  },
+  "RepeatSegment.Droid/RepeatSegment.Android.csproj": {
+    "mtime": 1782589719.9483356,
+    "ast_hash": "29b5786253b44f0c0e4a3da51307a279",
+    "semantic_hash": "29b5786253b44f0c0e4a3da51307a279"
+  },
+  "RepeatSegment.Maui/App.xaml.cs": {
+    "mtime": 1782711313.5946684,
+    "ast_hash": "c1afde24c6536f79064fed585aab3458",
+    "semantic_hash": "c1afde24c6536f79064fed585aab3458"
+  },
+  "RepeatSegment.Maui/AppShell.xaml.cs": {
+    "mtime": 1782653761.2354646,
+    "ast_hash": "d2304fd228b586af11aefd58816c92da",
+    "semantic_hash": "d2304fd228b586af11aefd58816c92da"
+  },
+  "RepeatSegment.Maui/MainPage.xaml.cs": {
+    "mtime": 1782589166.4656003,
+    "ast_hash": "d4d313358f74c2c9dbcf23920ac4a8b9",
+    "semantic_hash": "d4d313358f74c2c9dbcf23920ac4a8b9"
+  },
+  "RepeatSegment.Maui/MauiProgram.cs": {
+    "mtime": 1782751986.1858013,
+    "ast_hash": "3fe842fd200a937bc2ffbfdb6ad6db05",
+    "semantic_hash": "3fe842fd200a937bc2ffbfdb6ad6db05"
+  },
+  "RepeatSegment.Maui/Pages/MenuPage.xaml.cs": {
+    "mtime": 1782674426.495255,
+    "ast_hash": "e0deb67650b73e9a4788eec28b8097c3",
+    "semantic_hash": "e0deb67650b73e9a4788eec28b8097c3"
+  },
+  "RepeatSegment.Maui/Pages/PlayerPage.xaml.cs": {
+    "mtime": 1782821655.613353,
+    "ast_hash": "f23e8c5609f7ab57113032508e8fc078",
+    "semantic_hash": "f23e8c5609f7ab57113032508e8fc078"
+  },
+  "RepeatSegment.Maui/Pages/SettingsPage.xaml.cs": {
+    "mtime": 1782821693.5924692,
+    "ast_hash": "e79e93508ee037afe4f9204272878752",
+    "semantic_hash": "e79e93508ee037afe4f9204272878752"
+  },
+  "RepeatSegment.Maui/Platforms/Android/MainActivity.cs": {
+    "mtime": 1782588663.3190796,
+    "ast_hash": "84755f3a3237a7f1d2a1151a6cf2939c",
+    "semantic_hash": "84755f3a3237a7f1d2a1151a6cf2939c"
+  },
+  "RepeatSegment.Maui/Platforms/Android/MainApplication.cs": {
+    "mtime": 1782588663.3210864,
+    "ast_hash": "846025a748ad5ce840fdecdaba9379bc",
+    "semantic_hash": "846025a748ad5ce840fdecdaba9379bc"
+  },
+  "RepeatSegment.Maui/Platforms/MacCatalyst/AppDelegate.cs": {
+    "mtime": 1782588663.3441696,
+    "ast_hash": "103c3014eca414e8272869f800481d12",
+    "semantic_hash": "103c3014eca414e8272869f800481d12"
+  },
+  "RepeatSegment.Maui/Platforms/MacCatalyst/Program.cs": {
+    "mtime": 1782588663.3653176,
+    "ast_hash": "293a6bcd15ad1afef958408a1a6c4526",
+    "semantic_hash": "293a6bcd15ad1afef958408a1a6c4526"
+  },
+  "RepeatSegment.Maui/Platforms/Tizen/Main.cs": {
+    "mtime": 1782588663.3663177,
+    "ast_hash": "0fa6f815237f9533bbcef09088306a6f",
+    "semantic_hash": "0fa6f815237f9533bbcef09088306a6f"
+  },
+  "RepeatSegment.Maui/Platforms/Windows/App.xaml.cs": {
+    "mtime": 1782588663.38099,
+    "ast_hash": "3bfc7b1aae25f591733923dc443afe79",
+    "semantic_hash": "3bfc7b1aae25f591733923dc443afe79"
+  },
+  "RepeatSegment.Maui/Platforms/iOS/AppDelegate.cs": {
+    "mtime": 1782588663.323085,
+    "ast_hash": "103c3014eca414e8272869f800481d12",
+    "semantic_hash": "103c3014eca414e8272869f800481d12"
+  },
+  "RepeatSegment.Maui/Platforms/iOS/Program.cs": {
+    "mtime": 1782588663.3250864,
+    "ast_hash": "293a6bcd15ad1afef958408a1a6c4526",
+    "semantic_hash": "293a6bcd15ad1afef958408a1a6c4526"
+  },
+  "RepeatSegment.Maui/Properties/launchSettings.json": {
+    "mtime": 1782588663.3849962,
+    "ast_hash": "4e57b643958c5bf8b3edc47dc24a9cec",
+    "semantic_hash": "4e57b643958c5bf8b3edc47dc24a9cec"
+  },
+  "RepeatSegment.Maui/RepeatSegment.Maui.csproj": {
+    "mtime": 1782754969.8735385,
+    "ast_hash": "2748de53518ea2f027b53d513d0d94bc",
+    "semantic_hash": "2748de53518ea2f027b53d513d0d94bc"
+  },
+  "RepeatSegment.Maui/Services/AudioEngine.cs": {
+    "mtime": 1782814197.8743677,
+    "ast_hash": "2f8adfce52556c7b8c7f2f8aae24d176",
+    "semantic_hash": "2f8adfce52556c7b8c7f2f8aae24d176"
+  },
+  "RepeatSegment.Maui/Services/PlaybackService.cs": {
+    "mtime": 1782802100.3181484,
+    "ast_hash": "dbd815378ad9fbf28f947800370d0df7",
+    "semantic_hash": "dbd815378ad9fbf28f947800370d0df7"
+  },
+  "RepeatSegment.Maui/Services/RecentManager.cs": {
+    "mtime": 1782657727.4774132,
+    "ast_hash": "f089926a25f377f60a837e039c74fd32",
+    "semantic_hash": "f089926a25f377f60a837e039c74fd32"
+  },
+  "RepeatSegment.Maui/build_release.ps1": {
+    "mtime": 1782592885.6697228,
+    "ast_hash": "8f63b2f9d583a896abdd8d0d2799e14c",
+    "semantic_hash": "8f63b2f9d583a896abdd8d0d2799e14c"
+  },
+  "RepeatSegment.Native/MainActivity.cs": {
+    "mtime": 1782585013.304706,
+    "ast_hash": "0e984046971b62b694fa3ab8d4d11340",
+    "semantic_hash": "0e984046971b62b694fa3ab8d4d11340"
+  },
+  "RepeatSegment.Native/RepeatSegment.Native.csproj": {
+    "mtime": 1782585010.783417,
+    "ast_hash": "33d80fbe90696a068fcd7bef3aaff14b",
+    "semantic_hash": "33d80fbe90696a068fcd7bef3aaff14b"
+  }
+}

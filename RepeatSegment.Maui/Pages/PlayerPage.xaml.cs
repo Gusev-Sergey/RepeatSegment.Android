@@ -27,8 +27,16 @@ public partial class PlayerPage : ContentPage
     private const int HIGHLIGHT_INTERVAL = 250;
 
     private TranscriptionProvider? _transcriptionProvider;
+    private TranslationProvider? _translationProvider;
     private ConfigManager _config = new(System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "RepeatSegment"));
     private int _lastHlIdx = -1, _lastScrollWordIdx = -1;
+    private int _selStartChar = -1, _selEndChar = -1; // character-level selection (inclusive)
+    private int _selAnchorChar = -1; // fixed anchor point for drag selection
+    private bool _translating;
+    private float _density = 1f;
+    private int _loupeCapturePx = 138;
+    private bool _selByWord; // false=char, true=word
+    private int _transFontSize = 16;
 
     private bool _touchDragging;
     private double _dragStartSec, _dragEndSec;
@@ -36,7 +44,7 @@ public partial class PlayerPage : ContentPage
     private float _touchW, _touchH;
 
     private string[]? _transcriptionWords;
-    private int[]? _wordCharPositions;
+    private int[]? _wordCharPositions;  // word-start char indices
     private int _totalChars;
     private double _prevScrollOffset = -1;
     private PlayerFocusListener? _playerFocusListener;
@@ -66,6 +74,10 @@ public partial class PlayerPage : ContentPage
         foreach (var l in SpeedLabels) PckSpeed.Items.Add(l); PckSpeed.SelectedIndex = 6;
         PlaybackBridge.Cmd += OnPlaybackCmd;
         RequestAudioFocusViaService(); // once per lifetime
+#if ANDROID
+        NativeTouch.Attach(TransOverlay, OnTransTouch);
+        NativeMagnifier.Attach(LblTranscription);
+#endif
     }
     private void OnPlaybackCmd(string c) => Dispatcher.Dispatch(() =>
     {
@@ -182,6 +194,15 @@ public partial class PlayerPage : ContentPage
     private void OnVolDownClicked(object? s, EventArgs e) => ChVol(-1);
     private void ChVol(int d) { var a = GetAM(); if (a == null) return; int mx = a.GetStreamMaxVolume(global::Android.Media.Stream.Music), cur = a.GetStreamVolume(global::Android.Media.Stream.Music), nv = Math.Clamp(cur + d, 0, mx); a.SetStreamVolume(global::Android.Media.Stream.Music, nv, VolumeNotificationFlags.PlaySound); _audio.Volume = (float)nv / mx; LblVolume.Text = $"{(int)(_audio.Volume * 100)}%"; }
     private void OnCollapseClicked(object? s, EventArgs e) { LblTranscription.IsVisible = !LblTranscription.IsVisible; BtnCollapse.Text = LblTranscription.IsVisible ? "▲" : "▼"; }
+    private void OnSelModeClicked(object? s, EventArgs e) { _selByWord = !_selByWord; BtnSelMode.Text = _selByWord ? "W" : "Aa"; LblStatus.Text = _selByWord ? "Selection: words" : "Selection: chars"; }
+    private void OnTransPinch(object? s, PinchGestureUpdatedEventArgs e)
+    {
+        if (e.Status == GestureStatus.Running)
+        {
+            _transFontSize = (int)Math.Clamp(_transFontSize * e.Scale, 10, 36);
+            LblTranscription.FontSize = _transFontSize;
+        }
+    }
     private void OnSliderValueChanged(object? s, ValueChangedEventArgs e) { if (_sliderDragInProgress) { _positionSeconds = e.NewValue; LblPosition.Text = Fmt(_positionSeconds); } }
     private void OnSliderDragStarted(object? s, EventArgs e) => _sliderDragInProgress = true;
     private void OnSliderDragCompleted(object? s, EventArgs e) { _sliderDragInProgress = false; var sv = SliderPosition.Value; for (int i = 0; i < _fragments.Count; i++) if (_fragments[i].T1 <= sv && sv < _fragments[i].T2) { _counter = i; _t1 = _fragments[i].T1; _t2 = _fragments[i].T2; _positionSeconds = sv; if (!_pop) { StopPlay(); StartPlay(); } WaveformCanvas.InvalidateSurface(); LblPosition.Text = Fmt(_positionSeconds); UpdateSeg(); return; } if (_fragments.Count > 0) { _counter = _fragments.Count - 1; _t1 = _fragments[_counter].T1; _t2 = _fragments[_counter].T2; } _positionSeconds = sv; LblPosition.Text = Fmt(_positionSeconds); WaveformCanvas.InvalidateSurface(); UpdateSeg(); }
@@ -231,7 +252,7 @@ public partial class PlayerPage : ContentPage
     public async void OnTranscribeCache() { if (_audio?.Samples == null) { LblStatus.Text = "Load audio file first"; return; } _config = new ConfigManager(System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "RepeatSegment")); _config.Load(); ApDef(); _transcriptionProvider = new TranscriptionProvider(_config, _audio); _transcriptionProvider.SetSilenceZones(_detector.Silence); _transcriptionProvider.StatusChanged += msg => Dispatcher.Dispatch(() => LblStatus.Text = msg); try { BtnLoad.IsEnabled = false; LoadingOverlay.IsVisible = true; LoadingSpinner.IsRunning = true; LblLoadingStatus.Text = "Loading from cache..."; await Task.Run(() => _transcriptionProvider.Transcribe(_audio.FilePath, false)); int wc = _transcriptionProvider.WordTimings.Count; if (wc > 0) { BuildWL(); LblStatus.Text = $"Cache: {wc} words"; } else LblStatus.Text = "No cache found"; } catch (Exception ex) { LblStatus.Text = ex.Message; } finally { BtnLoad.IsEnabled = true; LoadingOverlay.IsVisible = false; LoadingSpinner.IsRunning = false; } }
     private void ApDef() { if (string.IsNullOrEmpty(_config.DeepgramApiKey)) _config.DeepgramApiKey = "5f8efa436c8b19dc254bf10187621eb3dc988ac5"; if (string.IsNullOrEmpty(_config.AssemblyAiApiKey)) _config.AssemblyAiApiKey = "5d343a133e014d3c866928299bc267f0"; }
     public async void OnTranscribeApi() { if (_audio?.Samples == null) { LblStatus.Text = "Load audio file first"; return; } _config = new ConfigManager(System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "RepeatSegment")); _config.Load(); ApDef(); if (string.IsNullOrEmpty(_config.DeepgramApiKey) && string.IsNullOrEmpty(_config.AssemblyAiApiKey)) { LblStatus.Text = "No API keys."; return; } _transcriptionProvider = new TranscriptionProvider(_config, _audio); _transcriptionProvider.SetSilenceZones(_detector.Silence); _transcriptionProvider.StatusChanged += msg => Dispatcher.Dispatch(() => LblStatus.Text = msg); try { BtnLoad.IsEnabled = false; LoadingOverlay.IsVisible = true; LoadingSpinner.IsRunning = true; LblLoadingStatus.Text = "Transcribing..."; await Task.Run(() => _transcriptionProvider.Transcribe(_audio.FilePath, true)); int wc = _transcriptionProvider.WordTimings.Count; if (wc > 0) { BuildWL(); LblStatus.Text = $"API: {wc} words"; } else { LblTranscription.Text = "No results."; LblStatus.Text = "0 words"; } } catch (Exception ex) { LblStatus.Text = ex.Message; } finally { BtnLoad.IsEnabled = true; LoadingOverlay.IsVisible = false; LoadingSpinner.IsRunning = false; } }
-    public async void LoadFile(string fp) { if (!System.IO.File.Exists(fp)) { LblStatus.Text = "File not found"; return; } _transcriptionProvider = null; _lastHlIdx = -1; _lastScrollWordIdx = -1; _transcriptionWords = null; _wordCharPositions = null; _totalChars = 0; _prevScrollOffset = -1; LblTranscription.FormattedText = null; LblTranscription.Text = ""; BtnLoad.IsEnabled = false; LoadingOverlay.IsVisible = true; LoadingSpinner.IsRunning = true; LblLoadingStatus.Text = "Building waveform..."; LblFileName.Text = System.IO.Path.GetFileName(fp); _audio?.Stop(); _audio?.Dispose(); _audio = new AudioEngine(); _audio.PlaybackSpeed = Speeds[PckSpeed.SelectedIndex]; bool ok = await Task.Run(() => _audio.Load(fp)); if (!ok) { LblStatus.Text = "Error loading file"; BtnLoad.IsEnabled = true; LoadingOverlay.IsVisible = false; LoadingSpinner.IsRunning = false; return; } _durationSeconds = _audio.Duration.TotalSeconds; _positionSeconds = 0; _counter = 0; _fragments.Clear(); _pop = true; _pte = false; _playGoMode = false; _dt = 0; _userSegment = null; LblLoadingStatus.Text = "Detecting segments..."; await Task.Run(() => { _detector.Detect(_audio.Samples!, _audio.SampleRate, _durationSeconds, 5.0); _fragments = _detector.T1T2Array.ToList(); }); if (_fragments.Count > 0) { _t1 = _fragments[0].T1; _t2 = _fragments[0].T2; _positionSeconds = _t1; } else { _t1 = 0; _t2 = _durationSeconds; } SliderPosition.Minimum = 0; SliderPosition.Maximum = _durationSeconds; SliderPosition.Value = _positionSeconds; LblPosition.Text = Fmt(_positionSeconds); LblDuration.Text = Fmt(_durationSeconds); UpdateSeg(); _btnBlocked = false; WaveformCanvas.InvalidateSurface(); LblStatus.Text = $"Loaded: {_fragments.Count} segments"; BtnLoad.IsEnabled = true; LoadingOverlay.IsVisible = false; LoadingSpinner.IsRunning = false; Services.RecentManager.AddFile(fp); await ShowTD(fp); }
+    public async void LoadFile(string fp) { if (!System.IO.File.Exists(fp)) { LblStatus.Text = "File not found"; return; } _transcriptionProvider = null; _translationProvider = null; _lastHlIdx = -1; _lastScrollWordIdx = -1; _selStartChar = -1; _selEndChar = -1; _transcriptionWords = null; _wordCharPositions = null; _totalChars = 0; _prevScrollOffset = -1; TranslationPanel.IsVisible = false; LblTranscription.FormattedText = null; LblTranscription.Text = ""; BtnLoad.IsEnabled = false; LoadingOverlay.IsVisible = true; LoadingSpinner.IsRunning = true; LblLoadingStatus.Text = "Building waveform..."; LblFileName.Text = System.IO.Path.GetFileName(fp); _audio?.Stop(); _audio?.Dispose(); _audio = new AudioEngine(); _audio.PlaybackSpeed = Speeds[PckSpeed.SelectedIndex]; bool ok = await Task.Run(() => _audio.Load(fp)); if (!ok) { LblStatus.Text = "Error loading file"; BtnLoad.IsEnabled = true; LoadingOverlay.IsVisible = false; LoadingSpinner.IsRunning = false; return; } _durationSeconds = _audio.Duration.TotalSeconds; _positionSeconds = 0; _counter = 0; _fragments.Clear(); _pop = true; _pte = false; _playGoMode = false; _dt = 0; _userSegment = null; LblLoadingStatus.Text = "Detecting segments..."; await Task.Run(() => { _detector.Detect(_audio.Samples!, _audio.SampleRate, _durationSeconds, 5.0); _fragments = _detector.T1T2Array.ToList(); }); if (_fragments.Count > 0) { _t1 = _fragments[0].T1; _t2 = _fragments[0].T2; _positionSeconds = _t1; } else { _t1 = 0; _t2 = _durationSeconds; } SliderPosition.Minimum = 0; SliderPosition.Maximum = _durationSeconds; SliderPosition.Value = _positionSeconds; LblPosition.Text = Fmt(_positionSeconds); LblDuration.Text = Fmt(_durationSeconds); UpdateSeg(); _btnBlocked = false; WaveformCanvas.InvalidateSurface(); LblStatus.Text = $"Loaded: {_fragments.Count} segments"; BtnLoad.IsEnabled = true; LoadingOverlay.IsVisible = false; LoadingSpinner.IsRunning = false; Services.RecentManager.AddFile(fp); await ShowTD(fp); }
     private async Task ShowTD(string p) { string? hc = ChkCache(p); var o = new List<string> { "Yes, from API" }; o.Add(hc != null ? $"Yes, from cache ({hc} words)" : "Cache not available"); string? c = await DisplayActionSheet("Transcribe?", "Not now", null, o.ToArray()); if (c == null || c == "Not now") return; if (c == "Yes, from API") OnTranscribeApi(); else if (c == o[1] && hc != null) OnTranscribeCache(); }
     private string? ChkCache(string p) { string d = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "RepeatSegment", "output"); if (!Directory.Exists(d)) return null; string n = System.IO.Path.GetFileNameWithoutExtension(p); var fs = System.IO.Directory.GetFiles(d, $"{n}_chunk*_deepgram_*.json").Concat(System.IO.Directory.GetFiles(d, $"{n}_chunk*_assemblyai_*.json")).ToArray(); return fs.Length > 0 ? $"{fs.Length} chunks" : null; }
 
@@ -278,49 +299,18 @@ public partial class PlayerPage : ContentPage
             }
         }
         if (idx < 0 || idx >= ws.Count) return;
-        int hlFirst = idx, hlLast = idx;
-        double totalDur = ws[idx].End - ws[idx].Start;
-        while (hlLast + 1 < ws.Count && totalDur + (ws[hlLast + 1].End - ws[hlLast + 1].Start) < 0.35)
-        {
-            hlLast++;
-            totalDur += ws[hlLast].End - ws[hlLast].Start;
-        }
-        if (hlFirst == hlLast && idx == last) return;
-        int newIdx = hlFirst;
-        var words = _transcriptionWords;
-        var fmt = new FormattedString();
-        var tsb = new System.Text.StringBuilder();
-        int hlStart = -1, hlEnd = -1;
-        for (int i = 0; i < words.Length; i++)
-        {
-            if (i == hlFirst) hlStart = tsb.Length;
-            tsb.Append(words[i]);
-            tsb.Append(' ');
-            if (i == hlLast) hlEnd = tsb.Length;
-        }
-        string fullText = tsb.ToString();
-        if (hlStart >= 0)
-        {
-            if (hlStart > 0)
-                fmt.Spans.Add(new Span { Text = fullText.Substring(0, hlStart), TextColor = Microsoft.Maui.Graphics.Color.FromArgb("#CCC"), FontSize = 16 });
-            fmt.Spans.Add(new Span { Text = fullText.Substring(hlStart, hlEnd - hlStart), TextColor = Microsoft.Maui.Graphics.Color.FromArgb("#111"), BackgroundColor = Microsoft.Maui.Graphics.Color.FromArgb("#FFD700"), FontAttributes = FontAttributes.Bold, FontSize = 16 });
-            if (hlEnd < fullText.Length)
-                fmt.Spans.Add(new Span { Text = fullText.Substring(hlEnd), TextColor = Microsoft.Maui.Graphics.Color.FromArgb("#CCC"), FontSize = 16 });
-        }
-        else
-        {
-            fmt.Spans.Add(new Span { Text = fullText, TextColor = Microsoft.Maui.Graphics.Color.FromArgb("#CCC"), FontSize = 16 });
-        }
-        var finalFmt = fmt;
-        int finalIdx = newIdx;
-        int charPos = _wordCharPositions[finalIdx];
-        // Proportional scroll: MAUI Label knows exact content height
+        if (idx == last) return;
+        _lastHlIdx = idx;
+
+        // Rebuild spans — called from bg timer, wrap in main thread
+        MainThread.BeginInvokeOnMainThread(() => RebuildTranscriptSpans());
+
+        // Proportional scroll
+        int charPos = _wordCharPositions[idx];
         MainThread.BeginInvokeOnMainThread(() =>
         {
-            LblTranscription.FormattedText = finalFmt;
-            _lastHlIdx = finalIdx;
             double contentHeight = LblTranscription.Height;
-            if (contentHeight <= 0.1) contentHeight = _totalChars * 0.22; // fallback
+            if (contentHeight <= 0.1) contentHeight = _totalChars * 0.22;
             double wordY = ((double)charPos / _totalChars) * contentHeight;
             double viewH = TransScrollView.Height;
             if (viewH <= 0) viewH = 190;
@@ -334,6 +324,238 @@ public partial class PlayerPage : ContentPage
                 _ = TransScrollView.ScrollToAsync(0, targetOffset, animated: true);
             }
         });
+    }
+
+    // ── Word selection & translation ──────────────────────────────────
+
+    /// <summary>Native touch: 0=Down(loupe), 1=Move(select), 2=Up(translate).</summary>
+    private void OnTransTouch(float x, float y, int action)
+    {
+        if (_transcriptionProvider?.WordTimings == null || _transcriptionWords == null || _wordCharPositions == null || _totalChars == 0)
+            return;
+
+        float density = (float)DeviceDisplay.MainDisplayInfo.Density;
+
+        // Use native Android TextView.Layout for pixel-perfect character hit testing
+        int charIdx = 0;
+        if (LblTranscription.Handler?.PlatformView is Android.Widget.TextView tv && tv.Layout != null)
+        {
+            // y is px relative to overlay.  Account for ScrollView offset & padding to get text-local y.
+            float contentPxY = y - (float)TransScrollView.Padding.Top * density + (float)TransScrollView.ScrollY * density;
+            int line = tv.Layout.GetLineForVertical(Math.Max(0, (int)contentPxY));
+            if (line >= 0 && line < tv.Layout.LineCount)
+                charIdx = tv.Layout.GetOffsetForHorizontal(line, Math.Max(0, x));
+        }
+        else
+        {
+            // Fallback: approximate from Y only
+            float dipY = y / density;
+            float contentH = (float)LblTranscription.Height;
+            if (contentH <= 0) return;
+            double scrollY = TransScrollView.ScrollY;
+            double padTop = TransScrollView.Padding.Top;
+            float contentY = dipY - (float)padTop + (float)scrollY;
+            if (contentY < 0) contentY = 0;
+            float relY = contentY / contentH;
+            if (relY > 1f) relY = 1f;
+            charIdx = (int)(relY * _totalChars);
+        }
+        if (charIdx < 0) charIdx = 0;
+        if (charIdx >= _totalChars) charIdx = _totalChars - 1;
+
+        // Find wordIdx for loupe positioning and play highlight
+        int wordIdx = -1;
+        for (int i = 0; i < _wordCharPositions.Length; i++)
+        {
+            int nextPos = (i + 1 < _wordCharPositions.Length) ? _wordCharPositions[i + 1] : _totalChars;
+            if (charIdx >= _wordCharPositions[i] && charIdx < nextPos) { wordIdx = i; break; }
+        }
+        if (wordIdx < 0 && _wordCharPositions.Length > 0)
+            wordIdx = (charIdx < _wordCharPositions[0]) ? 0 : _wordCharPositions.Length - 1;
+        if (wordIdx < 0) return;
+
+        _selAnchorChar = _selAnchorChar >= 0 ? _selAnchorChar : charIdx;
+
+        switch (action)
+        {
+            case 0: // Down — anchor selection at touch point
+                _selAnchorChar = charIdx;
+                _selStartChar = charIdx; _selEndChar = charIdx;
+                _lastHlIdx = -1;
+                RebuildTranscriptSpans();
+                ShowLoupe(wordIdx, x, y);
+                break;
+            case 1: // Move — range from anchor to current touch
+                _selStartChar = Math.Min(_selAnchorChar, charIdx);
+                _selEndChar = Math.Max(_selAnchorChar, charIdx);
+                RebuildTranscriptSpans();
+                ShowLoupe(wordIdx, x, y);
+                break;
+            case 2:
+                HideLoupe();
+                _selStartChar = Math.Min(_selAnchorChar, charIdx);
+                _selEndChar = Math.Max(_selAnchorChar, charIdx);
+                _ = TranslateSelection();
+                break;
+        }
+    }
+
+    private byte[]? _lastLoupeBmp;
+    private int _lastLoupeX, _lastLoupeY;
+
+    private void ShowLoupe(int wordIdx, float pxX, float pxY)
+    {
+        float density = _density > 1f ? _density : (_density = (float)DeviceDisplay.MainDisplayInfo.Density);
+        if (_loupeCapturePx == 138) _loupeCapturePx = (int)(180f * density / 1.3f);
+
+        float overlayDipY = (float)TransOverlay.Y;
+        float sx = pxX / density + 8f;
+        float sy = pxY / density + overlayDipY;
+        float lw = 180f, lh = 180f;
+
+        float ly = sy - lh - 4f;
+        if (TranslationPanel.IsVisible && ly + lh > (float)TranslationPanel.Y)
+            ly = (float)TranslationPanel.Y - lh - 4f;
+        if (ly < 0) ly = 4f;
+
+        float lx = sx;
+        if (lx + lw > (float)this.Width) lx = sx - lw - 8f;
+        if (lx < 0) lx = 0;
+
+        LoupeOverlay.TranslationX = lx;
+        LoupeOverlay.TranslationY = ly;
+        LoupeOverlay.IsVisible = true;
+
+#if ANDROID
+        // Skip capture if moved < 20px from last capture
+        int ipx = (int)pxX, ipy = (int)pxY;
+        if (_lastLoupeBmp != null && Math.Abs(ipx - _lastLoupeX) < 20 && Math.Abs(ipy - _lastLoupeY) < 20)
+            return;
+
+        _lastLoupeBmp = NativeMagnifier.Capture(ipx, ipy, _loupeCapturePx);
+        _lastLoupeX = ipx; _lastLoupeY = ipy;
+        if (_lastLoupeBmp != null)
+            LoupeImage.Source = ImageSource.FromStream(() => new System.IO.MemoryStream(_lastLoupeBmp));
+#endif
+    }
+
+    private void HideLoupe() { LoupeOverlay.IsVisible = false; }
+
+    private async Task TranslateSelection()
+    {
+        if (_selStartChar < 0 || _selEndChar < 0 || _transcriptionWords == null || _totalChars == 0 || _translating) return;
+        int s = Math.Min(_selStartChar, _selEndChar);
+        int e = Math.Max(_selStartChar, _selEndChar);
+
+        // Build full text and extract selected substring via char indices
+        var sb = new System.Text.StringBuilder();
+        for (int i = 0; i < _transcriptionWords.Length; i++) { sb.Append(_transcriptionWords[i]); sb.Append(' '); }
+        string fullText = sb.ToString();
+        if (s >= fullText.Length || e >= fullText.Length) return;
+        string text = fullText.Substring(s, e - s + 1).Trim();
+        if (string.IsNullOrWhiteSpace(text)) return;
+
+        LblSelectedText.Text = text;
+        LblTranslation.Text = "Translating...";
+        LblTranslationProvider.Text = "";
+        TranslationPanel.IsVisible = true;
+        _translating = true;
+
+        try
+        {
+            if (_translationProvider == null)
+            {
+                _translationProvider = new TranslationProvider(
+                    _config.YandexTranslateApiKey,
+                    _config.YandexTranslateFolderId,
+                    _config.TranslationProviderPreference);
+            }
+            string result = await _translationProvider.TranslateEnRu(text);
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                LblTranslation.Text = result;
+                LblTranslationProvider.Text = _translationProvider.LastUsedProvider ?? "unknown";
+            });
+        }
+        catch (Exception ex)
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                LblTranslation.Text = "? " + ex.Message;
+                LblTranslationProvider.Text = "";
+            });
+        }
+        finally { _translating = false; }
+    }
+
+    private void OnAnkiClicked(object? s, EventArgs e)
+    {
+        LblStatus.Text = "Anki card: TODO (not yet implemented)";
+    }
+
+    /// <summary>
+    /// Rebuild FormattedString with character-level selection highlight (blue) and word-level playing highlight (gold).
+    /// </summary>
+    private void RebuildTranscriptSpans()
+    {
+        if (_transcriptionWords == null || _totalChars == 0) return;
+        int playIdx = _lastHlIdx;
+
+        var sb = new System.Text.StringBuilder();
+        for (int i = 0; i < _transcriptionWords.Length; i++) { sb.Append(_transcriptionWords[i]); sb.Append(' '); }
+        string fullText = sb.ToString();
+
+        // selection: character range (inclusive after normalization)
+        int selS = _selStartChar, selE = _selEndChar;
+        if (selS > selE) { var t = selS; selS = selE; selE = t; }
+        bool hasSelection = selS >= 0 && selE < fullText.Length && selS <= selE;
+
+        // play highlight: word range → character range
+        bool hasPlay = playIdx >= 0 && playIdx < _transcriptionWords.Length && _wordCharPositions != null;
+        int hlS = hasPlay ? _wordCharPositions![playIdx] : -1;
+        int hlE = (hasPlay && playIdx + 1 < _wordCharPositions.Length) ? _wordCharPositions[playIdx + 1] : (hasPlay ? _totalChars : -1);
+
+        var fmt = new FormattedString();
+
+        if (!hasSelection && !hasPlay)
+        {
+            fmt.Spans.Add(new Span { Text = fullText, TextColor = Color.FromArgb("#CCC"), FontSize = 16 });
+        }
+        else
+        {
+            // Character-level iteration: single pass with state detection
+            for (int i = 0; i < fullText.Length;)
+            {
+                bool curSel = hasSelection && i >= selS && i <= selE;
+                bool curPlay = hasPlay && i >= hlS && i < hlE;
+
+                // Find run of identical state
+                int j = i;
+                while (j + 1 < fullText.Length)
+                {
+                    bool nextSel = hasSelection && (j + 1) >= selS && (j + 1) <= selE;
+                    bool nextPlay = hasPlay && (j + 1) >= hlS && (j + 1) < hlE;
+                    if (nextSel != curSel || nextPlay != curPlay) break;
+                    j++;
+                }
+
+                string seg = fullText.Substring(i, j - i + 1);
+                if (curSel && curPlay)
+                    fmt.Spans.Add(new Span { Text = seg, TextColor = Color.FromArgb("#111"), BackgroundColor = Color.FromArgb("#FFD700"), FontSize = 16 });
+                else if (curSel)
+                    fmt.Spans.Add(new Span { Text = seg, TextColor = Color.FromArgb("#FFF"), BackgroundColor = Color.FromArgb("#2A5A9B"), FontSize = 16 });
+                else if (curPlay)
+                    fmt.Spans.Add(new Span { Text = seg, TextColor = Color.FromArgb("#111"), BackgroundColor = Color.FromArgb("#FFD700"), FontSize = 16 });
+                else
+                    fmt.Spans.Add(new Span { Text = seg, TextColor = Color.FromArgb("#CCC"), FontSize = 16 });
+
+                i = j + 1;
+            }
+        }
+
+        // Always use direct assignment — caller is already on UI thread (TouchListener)
+        // or timer posts via BeginInvokeOnMainThread
+        LblTranscription.FormattedText = fmt;
     }
 
     private void RequestAudioFocusViaService()

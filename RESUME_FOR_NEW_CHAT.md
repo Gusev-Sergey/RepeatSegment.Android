@@ -1,116 +1,51 @@
-# RepeatSegment — Resume for New Chat (June 29, 2026)
+# RepeatSegment — Resume for New Chat (June 30, 2026, 23:50 YEKT)
 
-## Project Overview
+## Project Status
+MAUI Android приложение работает. Ключевой функционал выделения текста и лупы реализован и стабилен.
 
-RepeatSegment — приложение для изучения языков через аудиокниги. WPF-версия (Windows) портируется на Android через .NET MAUI.
+## Architecture Overview
+- **Проект**: [`RepeatSegment.Maui/`](RepeatSegment.Maui/) — MAUI Android (.NET 9)
+- **Бизнес-логика**: 8 shared .cs файлов из WPF проекта
+- **UI**: PlayerPage со всем функционалом в одном файле
 
-**Текущий статус:** MAUI Android приложение работает (Release сборка), базовый функционал портирован.
+## Key Files (Current State)
 
-## Repository Structure
+| File | Purpose |
+|------|---------|
+| [`PlayerPage.xaml`](RepeatSegment.Maui/Pages/PlayerPage.xaml) | UI: waveform, кнопки, транскрипция, лупа, панель перевода |
+| [`PlayerPage.xaml.cs`](RepeatSegment.Maui/Pages/PlayerPage.xaml.cs) | Вся логика: playback, транскрипция, выделение, лупа, перевод |
+| [`NativeTouch.cs`](RepeatSegment.Maui/Platforms/Android/NativeTouch.cs) | Нативный Android TouchListener для drag-выделения |
+| [`NativeMagnifier.cs`](RepeatSegment.Maui/Platforms/Android/NativeMagnifier.cs) | Скриншот TextView для лупы с ×1.3 увеличением |
+| [`AudioEngine.cs`](RepeatSegment.Maui/Services/AudioEngine.cs) | MediaExtractor + AudioTrack |
 
-```
-c:/ProjectsCSharp/
-├── RepeatSegment/                    # WPF проект (.NET 8) + MAUI shared
-│   ├── RepeatSegment.App/           # WPF UI + все бизнес-логика
-│   └── RepeatSegment.Tests/
-├── RepeatSegment.Android/           # Android проект
-│   └── RepeatSegment.Maui/          # MAUI Android приложение (.NET 9)
-│       ├── Pages/                   # UI страницы (Player, Menu, Settings)
-│       ├── Services/                # AudioEngine, RecentManager
-│       ├── Platforms/Android/       # Android-specific
-│       └── Resources/               # Иконки, шрифты, стили
-```
+## Selection System (Current)
+- **Character-level**: `_selStartChar`, `_selEndChar` — индексы символов
+- **Anchor-based**: `_selAnchorChar` фиксируется при Down, диапазон расширяется от якоря
+- **Highlights**: синий (`#2A5A9B`) для выделения, золотой (`#FFD700`) для проигрывания
+- **Loupe**: 180×180 pixel круглый Border + NativeMagnifier.Capture с ×1.3 zoom
+- **Position**: лупа над пальцем, не перекрывает TranslationPanel
 
-## Architecture: Shared Files
+## Translation
+- `TranslationProvider.TranslateEnRu(text)` — Google Translate (бесплатный) + Yandex fallback
+- API ключи в ConfigManager (`YandexTranslateApiKey`, `TranslationProviderPreference`)
 
-MAUI проект компилирует выбранные файлы из WPF проекта напрямую:
-```xml
-<Compile Include="..\..\RepeatSegment\RepeatSegment.App\SilenceDetector.cs" Link="Shared\SilenceDetector.cs" />
-<Compile Include="..\..\RepeatSegment\RepeatSegment.App\TranscriptionProvider.cs" ... />
-<Compile Include="..\..\RepeatSegment\RepeatSegment.App\TranslationProvider.cs" ... />
-<Compile Include="..\..\RepeatSegment\RepeatSegment.App\TtsProvider.cs" ... />
-<Compile Include="..\..\RepeatSegment\RepeatSegment.App\ConfigManager.cs" ... />
-<Compile Include="..\..\RepeatSegment\RepeatSegment.App\Strings.cs" ... />
-<Compile Include="..\..\RepeatSegment\RepeatSegment.App\AnkiBuilder.cs" ... />
-<Compile Include="..\..\RepeatSegment\RepeatSegment.App\AnkiExportManager.cs" ... />
-```
+## Build Commands
+```powershell
+# Сборка Release
+powershell -ExecutionPolicy Bypass -File "C:\ProjectsCSharp\RepeatSegment.Android\RepeatSegment.Maui\build_release.ps1"
 
-## Key Components Status
+# Установка
+%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe install -g -r "C:\ProjectsCSharp\RepeatSegment.Android\RepeatSegment.Maui\bin\Release\net9.0-android\com.astrorumarbor.repeatsegment-Signed.apk"
 
-| Компонент | Файл | Статус |
-|-----------|------|--------|
-| Audio Engine (Android) | `Services/AudioEngine.cs` | ✅ Работает (MediaExtractor + AudioTrack) |
-| Silence Detector | `Shared/SilenceDetector.cs` | ✅ Переиспользован из WPF |
-| Waveform (SkiaSharp) | `Pages/PlayerPage.xaml + .cs` | ✅ SKCanvasView рендерит |
-| Buttons (Play/PlayGo/Repeat) | `Pages/PlayerPage.xaml.cs:ButtonsPressed` | ✅ Портирована WPF логика |
-| Transcription Provider | `Shared/TranscriptionProvider.cs` | ✅ Deepgram API |
-| Translation Provider | `Shared/TranslationProvider.cs` | ✅ Google/Yandex |
-| Config Manager | `Shared/ConfigManager.cs` | ✅ INI-файлы |
-| Menu Page | `Pages/MenuPage.xaml + .cs` | ✅ С галочками |
-| Settings Page | `Pages/SettingsPage.xaml + .cs` | ✅ API ключи, язык, битрейт |
-| Recent Files | `Services/RecentManager.cs` | ✅ Статический, persistent |
-
-## NOT YET IMPLEMENTED
-- Translation UI (выделение текста → перевод → панель)
-- TTS + Anki Export
-- i18n (Strings.cs загрузка JSON языков)
-- Background playback
-
-## Critical Technical Notes
-
-### Сборка — ТОЛЬКО Release для тестирования!
-```
-dotnet build -c Release -f net9.0-android \
-  -p:AndroidSdkDirectory="%LOCALAPPDATA%\Android\Sdk" \
-  -p:JavaSdkDirectory="C:\Program Files\Android\Android Studio\jbr"
-```
-Debug сборка ожидает Fast Deployment (директория `.__override__`) и крашится при `adb install -r`.
-
-### csproj конфигурация
-```xml
-<EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
-<AndroidUseAssemblyStore>true</AndroidUseAssemblyStore>
-<AndroidStoreUncompressedFileExtensions>.so</AndroidStoreUncompressedFileExtensions>
-<AndroidEnable16KPageAlignment>false</AndroidEnable16KPageAlignment>
+# Запуск
+%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe shell monkey -p com.astrorumarbor.repeatsegment -c android.intent.category.LAUNCHER 1
 ```
 
-### NuGet пакеты
-```xml
-<PackageReference Include="Microsoft.Maui.Controls" Version="9.0.*" />
-<PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="4.148.0" />
-<PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.*" />
-```
+## TODO (Next Priorities)
+1. Переключение режима выделения: по буквам / по словам
+2. Pinch-to-zoom для изменения шрифта транскрипции
+3. AnkiCardPage
+4. Локализация UI (из WPF lang/*.json)
 
-### Телефон
-- **Модель:** iQOO Neo9S Pro+
-- **Android:** 15 (SDK 35)
-- **ADB:** `C:\Users\gsa40\AppData\Local\Microsoft\WinGet\Packages\Genymobile.scrcpy_...\scrcpy-win64-v4.0\adb.exe`
-- **SCRCPY:** для управления с ПК
-
-### Полезные команды
-```bash
-# Установка и запуск
-adb install -r bin\Release\net9.0-android\com.astrorumarbor.repeatsegment-Signed.apk
-adb shell monkey -p com.astrorumarbor.repeatsegment -c android.intent.category.LAUNCHER 1
-
-# Просмотр крашей
-adb logcat -d *:F | findstr repeatsegment
-
-# Полная очистка
-adb uninstall com.astrorumarbor.repeatsegment
-```
-
-## Known Warnings (2, не критичны)
-- CS0618: `SKPath.MoveTo/LineTo` deprecated → использовать `SKPathBuilder` (PlayerPage.xaml.cs:601-602)
-
-## Next Steps (Priority Order)
-1. Исправить 2 deprecated варнинга (SKPath → SKPathBuilder)
-2. Translation UI: тап по слову → перевод → панель + кнопка Anki (WPF модель)
-3. TTS + Anki Export
-4. i18n (Strings.cs + переключение языка)
-5. build_maui_debug.ps1 → переименовать/обновить для Release
-
-## Git
-- WPF проект в `c:/ProjectsCSharp/RepeatSegment/.git`
-- Android проект также в этом репозитории
-- Рабочая версия закоммичена
+## Bug Log
+See [`BUGFIND_LOG.md`](BUGFIND_LOG.md) for detailed bug history and root causes.

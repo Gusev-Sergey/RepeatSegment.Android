@@ -6,117 +6,79 @@
              Title="Player"
              BackgroundColor="#1E1E1E">
 
-    <Grid RowDefinitions="Auto,120,Auto,Auto,Auto,Auto,*,Auto" Padding="0">
-
-        <!-- Row 0: Top toolbar -->
+    <Grid RowDefinitions="Auto,120,Auto,Auto,Auto,Auto,*,Auto,Auto" Padding="0">
         <HorizontalStackLayout Grid.Row="0" Padding="12,6" Spacing="8">
-            <Button x:Name="BtnLoad" Text="📁 Load" FontSize="14"
-                    Clicked="OnLoadMenuClicked"
-                    BackgroundColor="#2A2A3E" TextColor="#E0E0E0"
-                    CornerRadius="8" HeightRequest="36" BorderWidth="0" />
-            <Label x:Name="LblFileName" Text="No file loaded"
-                   TextColor="#888" FontSize="12" VerticalOptions="Center" />
+            <Button x:Name="BtnLoad" Text="📁 Load" FontSize="14" Clicked="OnLoadMenuClicked"
+                    BackgroundColor="#2A2A3E" TextColor="#E0E0E0" CornerRadius="8" HeightRequest="36" BorderWidth="0" />
+            <Label x:Name="LblFileName" Text="No file loaded" TextColor="#888" FontSize="12" VerticalOptions="Center" />
         </HorizontalStackLayout>
-
-        <!-- Row 1: Waveform / Loading overlay -->
         <Grid Grid.Row="1">
-            <skia:SKCanvasView x:Name="WaveformCanvas"
-                               PaintSurface="OnWaveformPaint"
-                               EnableTouchEvents="True"
-                               Touch="OnWaveformTouch"
-                               HeightRequest="120" />
-            <!-- Loading state overlay -->
-            <VerticalStackLayout x:Name="LoadingOverlay" IsVisible="False"
-                                   VerticalOptions="Center" HorizontalOptions="Center"
-                                   Spacing="8">
-                <ActivityIndicator x:Name="LoadingSpinner" IsRunning="False"
-                                    Color="#00B4A6" WidthRequest="36" HeightRequest="36" />
-                <Label x:Name="LblLoadingStatus" Text="Loading..."
-                        TextColor="#E0E0E0" FontSize="18" FontAttributes="Bold"
-                        HorizontalTextAlignment="Center" />
+            <skia:SKCanvasView x:Name="WaveformCanvas" PaintSurface="OnWaveformPaint" EnableTouchEvents="True"
+                               Touch="OnWaveformTouch" HeightRequest="120" />
+            <VerticalStackLayout x:Name="LoadingOverlay" IsVisible="False" VerticalOptions="Center" HorizontalOptions="Center" Spacing="8">
+                <ActivityIndicator x:Name="LoadingSpinner" IsRunning="False" Color="#00B4A6" WidthRequest="36" HeightRequest="36" />
+                <Label x:Name="LblLoadingStatus" Text="Loading..." TextColor="#E0E0E0" FontSize="18" FontAttributes="Bold" HorizontalTextAlignment="Center" />
             </VerticalStackLayout>
         </Grid>
-
-        <!-- Row 2: Slider -->
         <Grid Grid.Row="2" ColumnDefinitions="48,*,48" Padding="10,2">
-            <Label Grid.Column="0" x:Name="LblPosition" Text="00:00"
-                    TextColor="White" FontSize="11" VerticalOptions="Center" />
-            <Slider Grid.Column="1" x:Name="SliderPosition"
-                    Minimum="0" Maximum="100" Value="0"
-                    ValueChanged="OnSliderValueChanged"
-                    DragStarted="OnSliderDragStarted"
-                    DragCompleted="OnSliderDragCompleted" />
-            <Label Grid.Column="2" x:Name="LblDuration" Text="00:00"
-                    TextColor="White" FontSize="11" VerticalOptions="Center"
-                    HorizontalTextAlignment="End" />
+            <Label Grid.Column="0" x:Name="LblPosition" Text="00:00" TextColor="White" FontSize="11" VerticalOptions="Center" />
+            <Slider Grid.Column="1" x:Name="SliderPosition" Minimum="0" Maximum="100" Value="0"
+                    ValueChanged="OnSliderValueChanged" DragStarted="OnSliderDragStarted" DragCompleted="OnSliderDragCompleted" />
+            <Label Grid.Column="2" x:Name="LblDuration" Text="00:00" TextColor="White" FontSize="11" VerticalOptions="Center" HorizontalTextAlignment="End" />
         </Grid>
-
-        <!-- Row 3: Transport buttons -->
         <HorizontalStackLayout Grid.Row="3" HorizontalOptions="Center" Spacing="3" Padding="2,2">
-            <ImageButton x:Name="BtnFirst" Source="first" WidthRequest="42" HeightRequest="42"
-                         Clicked="OnFirstClicked" Aspect="AspectFit"
-                         BackgroundColor="#555" CornerRadius="6" Padding="5" />
-            <ImageButton x:Name="BtnPrev" Source="pre_play" WidthRequest="42" HeightRequest="42"
-                         Clicked="OnPrevClicked" Aspect="AspectFit"
-                         BackgroundColor="#555" CornerRadius="6" Padding="5" />
-            <ImageButton x:Name="BtnRepeat" Source="repeat" WidthRequest="42" HeightRequest="42"
-                         Clicked="OnRepeatClicked" Aspect="AspectFit"
-                         BackgroundColor="#555" CornerRadius="6" Padding="5" />
-            <ImageButton x:Name="BtnPlayGo" Source="play_go" WidthRequest="42" HeightRequest="42"
-                         Clicked="OnPlayGoClicked" Aspect="AspectFit"
-                         BackgroundColor="#555" CornerRadius="6" Padding="5" />
-            <ImageButton x:Name="BtnPlay" Source="play" WidthRequest="42" HeightRequest="42"
-                         Clicked="OnPlayClicked" Aspect="AspectFit"
-                         BackgroundColor="#555" CornerRadius="6" Padding="5" />
-            <ImageButton x:Name="BtnNext" Source="next_play" WidthRequest="42" HeightRequest="42"
-                         Clicked="OnNextClicked" Aspect="AspectFit"
-                         BackgroundColor="#555" CornerRadius="6" Padding="5" />
-            <ImageButton x:Name="BtnLast" Source="last" WidthRequest="42" HeightRequest="42"
-                         Clicked="OnLastClicked" Aspect="AspectFit"
-                         BackgroundColor="#555" CornerRadius="6" Padding="5" />
+            <ImageButton Source="first" WidthRequest="42" HeightRequest="42" Clicked="OnFirstClicked" Aspect="AspectFit" BackgroundColor="#555" CornerRadius="6" Padding="5" />
+            <ImageButton Source="pre_play" WidthRequest="42" HeightRequest="42" Clicked="OnPrevClicked" Aspect="AspectFit" BackgroundColor="#555" CornerRadius="6" Padding="5" />
+            <ImageButton x:Name="BtnRepeat" Source="repeat" WidthRequest="42" HeightRequest="42" Clicked="OnRepeatClicked" Aspect="AspectFit" BackgroundColor="#555" CornerRadius="6" Padding="5" />
+            <ImageButton x:Name="BtnPlayGo" Source="play_go" WidthRequest="42" HeightRequest="42" Clicked="OnPlayGoClicked" Aspect="AspectFit" BackgroundColor="#555" CornerRadius="6" Padding="5" />
+            <ImageButton x:Name="BtnPlay" Source="play" WidthRequest="42" HeightRequest="42" Clicked="OnPlayClicked" Aspect="AspectFit" BackgroundColor="#555" CornerRadius="6" Padding="5" />
+            <ImageButton Source="next_play" WidthRequest="42" HeightRequest="42" Clicked="OnNextClicked" Aspect="AspectFit" BackgroundColor="#555" CornerRadius="6" Padding="5" />
+            <ImageButton Source="last" WidthRequest="42" HeightRequest="42" Clicked="OnLastClicked" Aspect="AspectFit" BackgroundColor="#555" CornerRadius="6" Padding="5" />
         </HorizontalStackLayout>
-
-        <!-- Row 4: Speed, Collapse, Volume -->
-        <Grid Grid.Row="4" ColumnDefinitions="*,Auto,Auto,Auto,Auto,*" Padding="8,1" ColumnSpacing="6">
-            <Picker x:Name="PckSpeed" Grid.Column="1"
-                    TextColor="#E0E0E0" TitleColor="#888"
-                    WidthRequest="72" FontSize="12"
-                    SelectedIndex="6"
-                    SelectedIndexChanged="OnSpeedChanged"
-                    BackgroundColor="#2D2D2D" />
-            <Button x:Name="BtnCollapse" Grid.Column="2" Text="▲" FontSize="12"
-                    WidthRequest="30" HeightRequest="30" Padding="0"
-                    Clicked="OnCollapseClicked"
-                    BackgroundColor="#444" TextColor="#888" CornerRadius="4" />
-            <Button x:Name="BtnVolDown" Grid.Column="3" Text="➖" FontSize="16"
-                    WidthRequest="30" HeightRequest="30" Padding="0"
-                    Clicked="OnVolDownClicked"
-                    BackgroundColor="#444" TextColor="White" CornerRadius="4" />
-            <Label x:Name="LblVolume" Grid.Column="4" Text="100%"
-                    TextColor="#CCC" FontSize="11" VerticalOptions="Center"
-                    WidthRequest="36" HorizontalTextAlignment="Center" />
-            <Button x:Name="BtnVolUp" Grid.Column="5" Text="➕" FontSize="16"
-                    WidthRequest="30" HeightRequest="30" Padding="0"
-                    Clicked="OnVolUpClicked"
-                    BackgroundColor="#444" TextColor="White" CornerRadius="4" />
+        <Grid Grid.Row="4" ColumnDefinitions="*,Auto,Auto,Auto,Auto,Auto,*" Padding="8,1" ColumnSpacing="6">
+            <Picker x:Name="PckSpeed" Grid.Column="1" TextColor="#E0E0E0" TitleColor="#888" WidthRequest="72" FontSize="12"
+                    SelectedIndex="6" SelectedIndexChanged="OnSpeedChanged" BackgroundColor="#2D2D2D" />
+            <Button x:Name="BtnCollapse" Grid.Column="2" Text="▲" FontSize="12" WidthRequest="30" HeightRequest="30" Padding="0"
+                    Clicked="OnCollapseClicked" BackgroundColor="#444" TextColor="#888" CornerRadius="4" />
+            <Button x:Name="BtnSelMode" Grid.Column="3" Text="Aa" FontSize="11" WidthRequest="36" HeightRequest="30" Padding="0"
+                    Clicked="OnSelModeClicked" BackgroundColor="#444" TextColor="#00B4A6" CornerRadius="4" />
+            <Button Grid.Column="4" Text="➖" FontSize="16" WidthRequest="30" HeightRequest="30" Padding="0"
+                    Clicked="OnVolDownClicked" BackgroundColor="#444" TextColor="White" CornerRadius="4" />
+            <Label x:Name="LblVolume" Grid.Column="5" Text="100%" TextColor="#CCC" FontSize="11" VerticalOptions="Center"
+                   WidthRequest="36" HorizontalTextAlignment="Center" />
+            <Button Grid.Column="6" Text="➕" FontSize="16" WidthRequest="30" HeightRequest="30" Padding="0"
+                    Clicked="OnVolUpClicked" BackgroundColor="#444" TextColor="White" CornerRadius="4" />
         </Grid>
-
-        <!-- Row 5: Segment info -->
-        <Label Grid.Row="5" x:Name="LblSegmentInfo"
-               Text="" TextColor="#00B4A6" FontSize="11"
-               Padding="12,1" HorizontalTextAlignment="Center" />
-
-        <!-- Row 6: Transcription area (8 lines) + future translation space -->
-        <ScrollView x:Name="TransScrollView" Grid.Row="6" Padding="12,6" HeightRequest="190">
-            <Label x:Name="LblTranscription"
-                   Text="No audio loaded. Tap 📁 Load to open an audiobook"
-                   TextColor="#888888" FontSize="16" LineBreakMode="WordWrap" />
+        <Label Grid.Row="5" x:Name="LblSegmentInfo" Text="" TextColor="#00B4A6" FontSize="11" Padding="12,1" HorizontalTextAlignment="Center" />
+        <ScrollView x:Name="TransScrollView" Grid.Row="6" Padding="12,6">
+            <Label x:Name="LblTranscription" Text="No audio loaded. Tap 📁 Load to open an audiobook"
+                   TextColor="#888888" FontSize="16" LineBreakMode="WordWrap">
+                <Label.GestureRecognizers>
+                    <PinchGestureRecognizer PinchUpdated="OnTransPinch" />
+                </Label.GestureRecognizers>
+            </Label>
         </ScrollView>
+        <BoxView x:Name="TransOverlay" Grid.Row="6" Color="#01000000" InputTransparent="False" />
 
-        <!-- Row 7: Status bar -->
-        <Label Grid.Row="7" x:Name="LblStatus"
-               Text="Ready" TextColor="#888888" FontSize="10"
-               Padding="12,2" BackgroundColor="#2D2D2D" />
+        <!-- Round loupe — absolutely positioned over entire page (RowSpan=9) -->
+        <Border x:Name="LoupeOverlay" IsVisible="False" Grid.RowSpan="9"
+                VerticalOptions="Start" HorizontalOptions="Start"
+                WidthRequest="180" HeightRequest="180"
+                StrokeShape="Ellipse" Stroke="#00B4A6" StrokeThickness="3"
+                BackgroundColor="#2D2D3F"
+                InputTransparent="True" Padding="0">
+            <Image x:Name="LoupeImage" Aspect="AspectFill" />
+        </Border>
+
+        <Border x:Name="TranslationPanel" Grid.Row="7" IsVisible="False" Padding="10,8" Margin="8,2,8,2"
+                BackgroundColor="#2A2A3E" StrokeShape="RoundRectangle 6" Stroke="#444">
+            <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto" RowSpacing="4">
+                <Label Grid.Row="0" Grid.ColumnSpan="2" x:Name="LblSelectedText" Text="" TextColor="#FFF" FontSize="13" FontAttributes="Italic" LineBreakMode="TailTruncation" />
+                <Label Grid.Row="1" Grid.ColumnSpan="2" x:Name="LblTranslation" Text="" TextColor="#00B4A6" FontSize="14" FontAttributes="Bold" LineBreakMode="WordWrap" />
+                <Label Grid.Row="2" Grid.Column="0" x:Name="LblTranslationProvider" Text="" TextColor="#888" FontSize="10" VerticalOptions="Center" />
+                <Button Grid.Row="2" Grid.Column="1" x:Name="BtnAnki" Text="+Anki" FontSize="11" BackgroundColor="#1E3A5F" TextColor="#00B4A6" CornerRadius="4" HeightRequest="28" Padding="8,0" Clicked="OnAnkiClicked" />
+            </Grid>
+        </Border>
+        <Label Grid.Row="8" x:Name="LblStatus" Text="Ready" TextColor="#888888" FontSize="10" Padding="12,2" BackgroundColor="#2D2D2D" />
     </Grid>
-
 </ContentPage>
