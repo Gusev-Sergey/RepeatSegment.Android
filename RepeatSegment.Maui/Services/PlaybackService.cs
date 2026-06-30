@@ -14,6 +14,9 @@ public class PlaybackService : Service
     private const int NOTIFY_ID = 1001;
     private const string CHANNEL_ID = "playback_channel";
     private MediaSession? _session;
+    private AudioManager? _audioManager;
+    private AudioFocusRequestClass? _focusRequest;
+    private bool _hasAudioFocus;
 
     public override void OnCreate()
     {
@@ -27,6 +30,7 @@ public class PlaybackService : Service
             StartForeground(NOTIFY_ID, BuildNotification(true, "RepeatSegment"), Android.Content.PM.ForegroundService.TypeMediaPlayback);
         else
             StartForeground(NOTIFY_ID, BuildNotification(true, "RepeatSegment"));
+        _audioManager = (AudioManager?)GetSystemService(AudioService);
     }
 
     private void CreateChannel()
@@ -57,11 +61,47 @@ public class PlaybackService : Service
         return b.Build();
     }
 
+    public void RequestAudioFocus()
+    {
+        if (_audioManager == null || _hasAudioFocus) return;
+        if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+        {
+            var attr = new AudioAttributes.Builder()
+                .SetUsage(AudioUsageKind.Media)!
+                .SetContentType(AudioContentType.Music)!
+                .Build()!;
+            var builder = new AudioFocusRequestClass.Builder(AudioFocus.Gain);
+            builder.SetAudioAttributes(attr);
+            builder.SetOnAudioFocusChangeListener(new FocusListener());
+            _focusRequest = builder.Build();
+            _hasAudioFocus = _audioManager.RequestAudioFocus(_focusRequest) == AudioFocusRequest.Granted;
+        }
+        else
+        {
+            _hasAudioFocus = _audioManager.RequestAudioFocus(new FocusListener(),
+                Android.Media.Stream.Music, AudioFocus.Gain) == AudioFocusRequest.Granted;
+        }
+    }
+
+    public void AbandonAudioFocus()
+    {
+        if (_audioManager == null || !_hasAudioFocus) return;
+        if (Build.VERSION.SdkInt >= BuildVersionCodes.O && _focusRequest != null)
+            _audioManager.AbandonAudioFocusRequest(_focusRequest);
+        else
+            _audioManager.AbandonAudioFocus(new FocusListener());
+        _hasAudioFocus = false;
+    }
+
     public override StartCommandResult OnStartCommand(Intent? intent, StartCommandFlags flags, int startId)
-        => StartCommandResult.Sticky;
+    {
+        if (intent?.Action == "request_focus")
+            RequestAudioFocus();
+        return StartCommandResult.Sticky;
+    }
 
     public override IBinder? OnBind(Intent? i) => null;
-    public override void OnDestroy() { _session?.Release(); _session = null; base.OnDestroy(); }
+    public override void OnDestroy() { AbandonAudioFocus(); _session?.Release(); _session = null; base.OnDestroy(); }
 
     private class SessionCb : MediaSession.Callback
     {
@@ -70,6 +110,29 @@ public class PlaybackService : Service
         public override void OnSkipToNext() => PlaybackBridge.Post("next");
         public override void OnSkipToPrevious() => PlaybackBridge.Post("prev");
         public override void OnStop() => PlaybackBridge.Post("stop");
+    }
+
+    /// <summary>Routes Audio Focus changes to the PlayerPage via PlaybackBridge.</summary>
+    private class FocusListener : Java.Lang.Object, AudioManager.IOnAudioFocusChangeListener
+    {
+        public void OnAudioFocusChange(AudioFocus focusChange)
+        {
+            switch (focusChange)
+            {
+                case AudioFocus.Gain:
+                    PlaybackBridge.Post("focus_gain");
+                    break;
+                case AudioFocus.Loss:
+                    PlaybackBridge.Post("focus_loss");
+                    break;
+                case AudioFocus.LossTransient:
+                    PlaybackBridge.Post("focus_loss_transient");
+                    break;
+                case AudioFocus.LossTransientCanDuck:
+                    PlaybackBridge.Post("focus_duck");
+                    break;
+            }
+        }
     }
 }
 
