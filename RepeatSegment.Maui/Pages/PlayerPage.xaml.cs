@@ -24,7 +24,7 @@ public partial class PlayerPage : ContentPage
     private System.Threading.Timer? _wordHighlightTimer;
     private const int RENDER_INTERVAL_MS = 16;
     private const int UI_INTERVAL = 100;
-    private const int HIGHLIGHT_INTERVAL = 250;
+    private const int HIGHLIGHT_INTERVAL = 100;
 
     private TranscriptionProvider? _transcriptionProvider;
     private TranslationProvider? _translationProvider;
@@ -33,9 +33,10 @@ public partial class PlayerPage : ContentPage
     private int _selStartChar = -1, _selEndChar = -1; // character-level selection (inclusive)
     private int _selAnchorChar = -1; // fixed anchor point for drag selection
     private bool _translating;
+    private float _lastPinchScale = 1f;
     private float _density = 1f;
     private int _loupeCapturePx = 138;
-    private bool _selByWord; // false=char, true=word
+    private bool _selByWord = true; // false=char, true=word — default W (word selection)
     private int _transFontSize = 16;
 
     private bool _touchDragging;
@@ -77,6 +78,9 @@ public partial class PlayerPage : ContentPage
 #if ANDROID
         NativeTouch.Attach(TransOverlay, OnTransTouch);
         NativeMagnifier.Attach(LblTranscription);
+        NativeMagnifier.AttachLoupeView(LoupeImage);
+        NativeTouch.PinchStart += (cx, cy) => { };
+        NativeTouch.PinchEnd += (cx, cy) => { };
 #endif
     }
     private void OnPlaybackCmd(string c) => Dispatcher.Dispatch(() =>
@@ -111,8 +115,35 @@ public partial class PlayerPage : ContentPage
     });
 
     protected override void OnAppearing() { base.OnAppearing(); if (_firstAppearance) { _firstAppearance = false; var r = Services.RecentManager.Files; if (r.Count > 0 && System.IO.File.Exists(r[0])) LoadFile(r[0]); } }
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        // Auto-save config state on page leave
+        try
+        {
+            _config.Load();
+            _config.FileName = System.IO.Path.GetFileName(_audio?.FilePath ?? "");
+            _config.Position = _positionSeconds;
+            _config.Counter = _counter;
+            _config.Save(_config.Path, _config.FileName, _config.Position, _config.Counter);
+        }
+        catch { /* best-effort */ }
+    }
+    protected override bool OnBackButtonPressed()
+    {
+        MainThread.BeginInvokeOnMainThread(async () =>
+        {
+            bool ok = await DisplayAlert("Exit", "Stop playback and exit?", "Yes", "No");
+            if (ok)
+            {
+                if (!_pop) { StopPlay(); UpdateSkinsStopped(); _pop = true; }
+                await Shell.Current.GoToAsync("//menu");
+            }
+        });
+        return true; // intercept
+    }
     private async void OnLoadMenuClicked(object? s, EventArgs e) { var r = Services.RecentManager.Files; var o = new List<string> { "📂 Browse files..." }; foreach (var f in r.Take(5)) o.Add($"📄 {System.IO.Path.GetFileName(f)}"); string? c = await DisplayActionSheet("Load Audio", "Cancel", null, o.ToArray()); if (string.IsNullOrEmpty(c) || c == "Cancel") return; if (c == "📂 Browse files...") await Pick(); else { int i = o.IndexOf(c); if (i > 0 && i <= r.Count) LoadFile(r[i - 1]); } }
-    private async Task Pick() { try { var r = await FilePicker.Default.PickAsync(new PickOptions { PickerTitle = "Select audio", FileTypes = new FilePickerFileType(new Dictionary<DevicePlatform, IEnumerable<string>> { { DevicePlatform.Android, new[] { "audio/mpeg", "audio/wav", "audio/x-wav" } } }) }); if (r == null) return; LoadFile(r.FullPath); } catch (Exception ex) { LblStatus.Text = ex.Message; } }
+    private async Task Pick() { try { var r = await FilePicker.Default.PickAsync(new PickOptions { PickerTitle = "Select audio" }); if (r == null) return; LoadFile(r.FullPath); } catch (Exception ex) { LblStatus.Text = ex.Message; } }
 
     private void OnPlayClicked(object? s, EventArgs e) => Btn("play");
     private void OnPlayGoClicked(object? s, EventArgs e) => Btn("play_go");
@@ -281,7 +312,8 @@ public partial class PlayerPage : ContentPage
         if (_transcriptionProvider?.WordTimings == null || _transcriptionWords == null || _wordCharPositions == null || _totalChars == 0) return;
         var ws = _transcriptionProvider.WordTimings;
         if (ws.Count == 0) return;
-        double pos = _positionSeconds;
+        double latency = _config.PlaybackLatency > 0 ? _config.PlaybackLatency : 0.1;
+        double pos = _positionSeconds - latency;
         int last = _lastHlIdx;
         int idx = -1;
         for (int i = Math.Max(0, last - 5); i < Math.Min(ws.Count, last + 10); i++)
@@ -299,7 +331,6 @@ public partial class PlayerPage : ContentPage
             }
         }
         if (idx < 0 || idx >= ws.Count) return;
-        if (idx == last) return;
         _lastHlIdx = idx;
 
         // Rebuild spans — called from bg timer, wrap in main thread
@@ -397,6 +428,11 @@ public partial class PlayerPage : ContentPage
                 _selEndChar = Math.Max(_selAnchorChar, charIdx);
                 _ = TranslateSelection();
                 break;
+            case 3: // pinch-zoom — x is cumulative scale factor, y unused
+                _transFontSize = (int)Math.Clamp(_transFontSize * (x / (_lastPinchScale > 0 ? _lastPinchScale : 1f)), 10, 36);
+                _lastPinchScale = x;
+                LblTranscription.FontSize = _transFontSize;
+                break;
         }
     }
 
@@ -463,13 +499,14 @@ public partial class PlayerPage : ContentPage
 
         try
         {
-            if (_translationProvider == null)
-            {
-                _translationProvider = new TranslationProvider(
-                    _config.YandexTranslateApiKey,
-                    _config.YandexTranslateFolderId,
-                    _config.TranslationProviderPreference);
-            }
+            // Re-read config to pick up fresh API keys and apply defaults
+            _config = new ConfigManager(System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "RepeatSegment"));
+            _config.Load();
+            ApDef();
+            _translationProvider = new TranslationProvider(
+                _config.YandexTranslateApiKey,
+                _config.YandexTranslateFolderId,
+                _config.TranslationProviderPreference);
             string result = await _translationProvider.TranslateEnRu(text);
             MainThread.BeginInvokeOnMainThread(() =>
             {

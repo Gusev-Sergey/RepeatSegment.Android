@@ -71,9 +71,9 @@ image_search_provider = yandex
         _config.Load();
 
         if (string.IsNullOrEmpty(_config.DeepgramApiKey))
-            _config.DeepgramApiKey = "";
+            _config.DeepgramApiKey = "5f8efa436c8b19dc254bf10187621eb3dc988ac5";
         if (string.IsNullOrEmpty(_config.AssemblyAiApiKey))
-            _config.AssemblyAiApiKey = "";
+            _config.AssemblyAiApiKey = "5d343a133e014d3c866928299bc267f0";
         if (string.IsNullOrEmpty(_config.YandexTranslateApiKey))
             _config.YandexTranslateApiKey = "";
         if (string.IsNullOrEmpty(_config.YandexTranslateFolderId))
@@ -135,5 +135,46 @@ image_search_provider = yandex
         _config.Save(_config.Path, _config.FileName, _config.Position, _config.Counter);
 
         await DisplayAlert("Settings", "Saved successfully!", "OK");
+    }
+
+    private async void OnBackClicked(object? sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("//menu");
+    }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        SaveSettings();
+    }
+
+    private void SaveSettings()
+    {
+        _config.DeepgramApiKey = EntryDeepgramKey.Text ?? "";
+        _config.AssemblyAiApiKey = EntryAssemblyAiKey.Text ?? "";
+
+        var providers = new List<string>();
+        if (CbDeepgram.IsChecked) providers.Add("deepgram");
+        if (CbAssemblyAi.IsChecked) providers.Add("assemblyai");
+        if (providers.Count == 0) providers.Add("deepgram");
+        _config.ProvidersEnabled = providers;
+
+        _config.TranslationProviderPreference = RbYandex.IsChecked ? "yandex" : "google";
+        _config.YandexTranslateApiKey = EntryYandexKey.Text ?? "";
+        _config.YandexTranslateFolderId = EntryYandexFolder.Text ?? "";
+
+        string[] langs = { "en", "ru", "de", "fr", "es" };
+        int uiIdx = PckUiLang.SelectedIndex;
+        _config.Language = (uiIdx >= 0 && uiIdx < langs.Length) ? langs[uiIdx] : "en";
+        _config.TranscriptionLanguage = PckTransLang.SelectedIndex == 1 ? "ru" : "en";
+
+        if (int.TryParse(EntryChunk.Text, out int chunk)) _config.ChunkMinutes = Math.Clamp(chunk, 1, 60);
+        if (double.TryParse(EntryLatency.Text, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out double lat))
+            _config.PlaybackLatency = Math.Clamp(lat, 0.0, 2.0);
+
+        _config.Mp3BitrateKbps = PckMp3Bitrate.SelectedIndex == 1 ? 128 : 64;
+        _config.ImageSearchProvider = PckImageProvider.SelectedIndex == 1 ? "yandex" : "google";
+
+        _config.Save(_config.Path, _config.FileName, _config.Position, _config.Counter);
     }
 }

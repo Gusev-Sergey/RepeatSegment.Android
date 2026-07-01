@@ -100,6 +100,11 @@
                         Clicked="OnSaveClicked"
                         BackgroundColor="#00B4A6" TextColor="White"
                         CornerRadius="8" HeightRequest="48" Margin="4,12,4,4"/>
+                <!-- ↩ Back -->
+                <Button Text="↩ Menu" FontSize="16" FontAttributes="Bold"
+                        Clicked="OnBackClicked"
+                        BackgroundColor="#333355" TextColor="#E0E0E0"
+                        CornerRadius="8" HeightRequest="44" Margin="4,4,4,4"/>
                 <BoxView HeightRequest="24" Color="Transparent"/>
             </VerticalStackLayout>
         </ScrollView>

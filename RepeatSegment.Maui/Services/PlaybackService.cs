@@ -51,14 +51,24 @@ public class PlaybackService : Service
         nm?.Notify(NOTIFY_ID, BuildNotification(playing, title ?? "RepeatSegment"));
     }
 
+    private PendingIntent? BuildPendingIntent()
+    {
+        var intent = new Intent(this, typeof(PlaybackService));
+        intent.SetAction("open_player");
+        const int flag = (int)(PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable);
+        return PendingIntent.GetService(this, 0, intent, (PendingIntentFlags)flag);
+    }
+
     private Notification BuildNotification(bool playing, string title)
     {
+        var pi = BuildPendingIntent();
         var b = new NotificationCompat.Builder(this, CHANNEL_ID)
             .SetContentTitle(title)
             .SetContentText(playing ? "Playing" : "Paused")
             .SetSmallIcon(Android.Resource.Drawable.IcMediaPlay)
             .SetPriority(NotificationCompat.PriorityLow)
             .SetOngoing(playing);
+        if (pi != null) b.SetContentIntent(pi);
         return b.Build();
     }
 
