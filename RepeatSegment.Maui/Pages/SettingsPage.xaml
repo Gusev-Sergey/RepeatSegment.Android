@@ -7,9 +7,12 @@
 
     <Grid RowDefinitions="Auto,*" Padding="0">
         <!-- Header -->
-        <Grid Grid.Row="0" BackgroundColor="#1A1A2E" Padding="20,30,20,16">
-            <Label Text="Settings" FontSize="22" FontAttributes="Bold"
-                   TextColor="#E0E0E0" />
+        <Grid Grid.Row="0" BackgroundColor="#1A1A2E" Padding="20,30,20,16" ColumnDefinitions="*,Auto">
+            <Label Grid.Column="0" Text="Settings" FontSize="22" FontAttributes="Bold"
+                   TextColor="#E0E0E0" VerticalOptions="Center" />
+            <Button Grid.Column="1" Text="↩" FontSize="22" Clicked="OnBackToPlayerClicked"
+                    BackgroundColor="#00B4A6" TextColor="White" CornerRadius="6"
+                    HeightRequest="34" Padding="12,0" VerticalOptions="Center" />
         </Grid>
 
         <ScrollView Grid.Row="1" Padding="12,8">
@@ -100,11 +103,6 @@
                         Clicked="OnSaveClicked"
                         BackgroundColor="#00B4A6" TextColor="White"
                         CornerRadius="8" HeightRequest="48" Margin="4,12,4,4"/>
-                <!-- ↩ Back -->
-                <Button Text="↩ Menu" FontSize="16" FontAttributes="Bold"
-                        Clicked="OnBackClicked"
-                        BackgroundColor="#333355" TextColor="#E0E0E0"
-                        CornerRadius="8" HeightRequest="44" Margin="4,4,4,4"/>
                 <BoxView HeightRequest="24" Color="Transparent"/>
             </VerticalStackLayout>
         </ScrollView>

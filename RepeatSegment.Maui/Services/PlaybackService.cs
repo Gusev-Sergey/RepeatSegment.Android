@@ -51,25 +51,21 @@ public class PlaybackService : Service
         nm?.Notify(NOTIFY_ID, BuildNotification(playing, title ?? "RepeatSegment"));
     }
 
-    private PendingIntent? BuildPendingIntent()
-    {
-        var intent = new Intent(this, typeof(PlaybackService));
-        intent.SetAction("open_player");
-        const int flag = (int)(PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable);
-        return PendingIntent.GetService(this, 0, intent, (PendingIntentFlags)flag);
-    }
-
     private Notification BuildNotification(bool playing, string title)
     {
-        var pi = BuildPendingIntent();
-        var b = new NotificationCompat.Builder(this, CHANNEL_ID)
-            .SetContentTitle(title)
-            .SetContentText(playing ? "Playing" : "Paused")
-            .SetSmallIcon(Android.Resource.Drawable.IcMediaPlay)
-            .SetPriority(NotificationCompat.PriorityLow)
-            .SetOngoing(playing);
-        if (pi != null) b.SetContentIntent(pi);
-        return b.Build();
+        var intent = new Intent(this, typeof(MainActivity));
+        intent.SetFlags(ActivityFlags.SingleTop | ActivityFlags.ClearTop);
+        var pending = PendingIntent.GetActivity(this, 0, intent,
+            PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable);
+
+        var b = new NotificationCompat.Builder(this, CHANNEL_ID);
+        b.SetContentTitle(title);
+        b.SetContentText(playing ? "Playing" : "Paused");
+        b.SetSmallIcon(Android.Resource.Drawable.IcMediaPlay);
+        b.SetPriority(NotificationCompat.PriorityLow);
+        b.SetOngoing(playing);
+        b.SetContentIntent(pending);
+        return b.Build()!;
     }
 
     public void RequestAudioFocus()
@@ -85,8 +81,8 @@ public class PlaybackService : Service
             var builder = new AudioFocusRequestClass.Builder(AudioFocus.Gain);
             builder.SetAudioAttributes(attr);
             builder.SetOnAudioFocusChangeListener(_focusListener);
-            _focusRequest = builder.Build();
-            _hasAudioFocus = _audioManager.RequestAudioFocus(_focusRequest) == AudioFocusRequest.Granted;
+            _focusRequest = builder.Build()!;
+            _hasAudioFocus = _audioManager.RequestAudioFocus(_focusRequest!) == AudioFocusRequest.Granted;
         }
         else
         {

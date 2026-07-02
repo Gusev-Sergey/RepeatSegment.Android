@@ -31,10 +31,6 @@ public class AudioEngine : IDisposable
     public double PlaybackSpeed { get; set; } = 1.0;
     public int Mp3BitrateKbps { get; set; } = 128;
 
-    /// <summary>Status callback for UI updates (e.g., "Loading...", "Decoding...").</summary>
-    public event Action<string>? StatusChanged;
-    private void SetStatus(string msg) => StatusChanged?.Invoke(msg);
-
     // ── Playback internals ─────────────────────────────────────────
     private AudioTrack? _audioTrack;
     private int _playbackHeadSample;   // sample index where current playback segment starts in Samples
@@ -47,7 +43,7 @@ public class AudioEngine : IDisposable
     // ── Load ───────────────────────────────────────────────────────
 
     /// <summary>Load an MP3 or WAV file via MediaExtractor. Returns true on success.</summary>
-    public bool Load(string filePath)
+    public bool Load(string filePath, Action<string>? onStatus = null)
     {
         if (!File.Exists(filePath))
         {
@@ -59,66 +55,81 @@ public class AudioEngine : IDisposable
 
         try
         {
-            // Decode entire file to float[] via MediaExtractor + MediaCodec
-            var result = DecodeAudioFile(filePath);
-            if (result == null)
-                return false;
+            float[]? allSamples = null;
 
-            float[] allSamples = result.Value.Samples;
-            int channels = result.Value.Channels;
-
-            // Mono conversion: average channels if needed
-            if (channels > 1)
+            // 1. Try full sample cache
+            if (LoadSamplesCache(filePath, out var cachedSamples, out var cachedRate))
             {
-                int monoLen = allSamples.Length / channels;
-                var monoSamples = new float[monoLen];
-                for (int i = 0; i < monoLen; i++)
-                {
-                    float sum = 0;
-                    for (int ch = 0; ch < channels; ch++)
-                        sum += allSamples[i * channels + ch];
-                    monoSamples[i] = sum / channels;
-                }
-                allSamples = monoSamples;
-            }
-
-            FilePath = filePath;
-            SampleRate = result.Value.SampleRate;
-            Duration = TimeSpan.FromSeconds((double)allSamples.Length / SampleRate);
-
-            // Normalize to peak 1.0
-            float peak = 0;
-            foreach (var s in allSamples)
-            {
-                var abs = Math.Abs(s);
-                if (abs > peak) peak = abs;
-            }
-            if (peak > 0)
-            {
-                for (int i = 0; i < allSamples.Length; i++)
-                    allSamples[i] /= peak;
-            }
-            Samples = allSamples;
-
-            // Downsample for display (SamplesSmall)
-            SampleRateSmall = Math.Min(SampleRate, 1000);
-            if (SampleRate > 1000)
-            {
-                int factor = SampleRate / SampleRateSmall;
-                int smallLen = (allSamples.Length + factor - 1) / factor;
-                var small = new float[smallLen];
-                for (int i = 0; i < smallLen; i++)
-                    small[i] = allSamples[Math.Min(i * factor, allSamples.Length - 1)];
-                SamplesSmall = small;
-                SampleRateSmall = SampleRate / factor;
+                onStatus?.Invoke("Loading from cache...");
+                allSamples = cachedSamples;
+                SampleRate = cachedRate;
+                FilePath = filePath;
+                Duration = TimeSpan.FromSeconds((double)allSamples.Length / SampleRate);
+                Samples = allSamples;
+                Log.Info($"[INFO] Loaded full samples from cache: {filePath}");
             }
             else
             {
-                SamplesSmall = (float[])allSamples.Clone();
+                // 2. Decode from audio file
+                onStatus?.Invoke("Decoding audio...");
+                var result = DecodeAudioFile(filePath);
+                if (result == null)
+                    return false;
+
+                allSamples = result.Value.Samples;
+                int channels = result.Value.Channels;
+
+                // Mono conversion: average channels if needed
+                if (channels > 1)
+                {
+                    int monoLen = allSamples.Length / channels;
+                    var monoSamples = new float[monoLen];
+                    for (int i = 0; i < monoLen; i++)
+                    {
+                        float sum = 0;
+                        for (int ch = 0; ch < channels; ch++)
+                            sum += allSamples[i * channels + ch];
+                        monoSamples[i] = sum / channels;
+                    }
+                    allSamples = monoSamples;
+                }
+
+                FilePath = filePath;
+                SampleRate = result.Value.SampleRate;
+                Duration = TimeSpan.FromSeconds((double)allSamples.Length / SampleRate);
+
+                // Normalize to peak 1.0
+                onStatus?.Invoke("Normalizing...");
+                float peak = 0;
+                foreach (var s in allSamples)
+                {
+                    var abs = Math.Abs(s);
+                    if (abs > peak) peak = abs;
+                }
+                if (peak > 0)
+                {
+                    for (int i = 0; i < allSamples.Length; i++)
+                        allSamples[i] /= peak;
+                }
+                Samples = allSamples;
+
+                // Save full sample cache for next time
+                onStatus?.Invoke("Saving cache...");
+                SaveSamplesCache(filePath, allSamples!);
             }
 
-            // ── Cache .samples and .waveform for fast reload ────────────
-            SaveSamplesCache(filePath, allSamples, SampleRate);
+            // 3. Waveform (SamplesSmall) — separate lightweight cache
+            if (LoadWaveformCache(filePath))
+            {
+                onStatus?.Invoke("Loading waveform cache...");
+                Log.Info($"[INFO] Loaded waveform from cache: {filePath}");
+            }
+            else
+            {
+                onStatus?.Invoke("Building waveform...");
+                BuildSamplesSmall(allSamples!);
+                SaveWaveformCache(filePath);
+            }
 
             Log.Info($"[INFO] Loaded {filePath}, duration={Duration.TotalSeconds:F1}s, sr={SampleRate}, sr_small={SampleRateSmall}");
             return true;
@@ -130,90 +141,167 @@ public class AudioEngine : IDisposable
         }
     }
 
-    /// <summary>Returns the full-quality sample array.</summary>
-    public float[]? GetSamples() => Samples;
+    // ── Waveform cache ──────────────────────────────────────────────
 
-    // ── Samples cache (.samples / .waveform binary files) ──────────
+    private const int WAVEFORM_CACHE_RATE = 200; // Hz — enough for visual waveform
 
-    private static string CacheDir => System.IO.Path.Combine(
-        System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData),
-        "RepeatSegment", "cache");
-
-    private static string SamplesCachePath(string audioPath) =>
-        System.IO.Path.Combine(CacheDir, System.IO.Path.GetFileNameWithoutExtension(audioPath) + ".samples");
-
-    private static string WaveformCachePath(string audioPath) =>
-        System.IO.Path.Combine(CacheDir, System.IO.Path.GetFileNameWithoutExtension(audioPath) + ".waveform");
-
-    private void SaveSamplesCache(string audioPath, float[] samples, int sampleRate)
+    private string GetCachePath(string audioPath)
     {
-        try
-        {
-            System.IO.Directory.CreateDirectory(CacheDir);
-            // Save samples: 4 bytes length (int32), 4 bytes sampleRate, then float[]
-            string sp = SamplesCachePath(audioPath);
-            using (var fs = new System.IO.FileStream(sp, System.IO.FileMode.Create))
-            using (var bw = new System.IO.BinaryWriter(fs))
-            {
-                bw.Write(samples.Length);
-                bw.Write(sampleRate);
-                foreach (var s in samples) bw.Write(s);
-            }
-            // Save waveform (downsampled for display) if SamplesSmall is computed
-            if (SamplesSmall != null)
-            {
-                string wp = WaveformCachePath(audioPath);
-                using (var fs = new System.IO.FileStream(wp, System.IO.FileMode.Create))
-                using (var bw = new System.IO.BinaryWriter(fs))
-                {
-                    bw.Write(SamplesSmall.Length);
-                    bw.Write(SampleRateSmall);
-                    foreach (var s in SamplesSmall) bw.Write(s);
-                }
-            }
-        }
-        catch { /* best-effort cache */ }
+        string dir = Path.GetDirectoryName(audioPath) ?? ".";
+        string name = Path.GetFileNameWithoutExtension(audioPath);
+        return Path.Combine(dir, $"{name}.waveform");
     }
 
-    /// <summary>Try to load pre-cached samples from .samples and .waveform files.</summary>
-    public bool TryLoadSamplesCache(string audioPath)
+    /// <summary>Try to load SamplesSmall from cache file. Returns true on success.</summary>
+    private bool LoadWaveformCache(string audioPath)
     {
+        string cacheFile = GetCachePath(audioPath);
+        if (!File.Exists(cacheFile)) return false;
+
+        // Stale check: audio file modified after cache?
+        if (File.GetLastWriteTimeUtc(cacheFile) < File.GetLastWriteTimeUtc(audioPath))
+        {
+            try { File.Delete(cacheFile); } catch { }
+            return false;
+        }
+
         try
         {
-            string sp = SamplesCachePath(audioPath);
-            string wp = WaveformCachePath(audioPath);
-            if (!System.IO.File.Exists(sp) || !System.IO.File.Exists(wp))
-                return false;
+            using var fs = new FileStream(cacheFile, FileMode.Open, FileAccess.Read);
+            using var br = new BinaryReader(fs);
 
-            // Load samples
-            using (var fs = new System.IO.FileStream(sp, System.IO.FileMode.Open))
-            using (var br = new System.IO.BinaryReader(fs))
-            {
-                int len = br.ReadInt32();
-                SampleRate = br.ReadInt32();
-                Samples = new float[len];
-                for (int i = 0; i < len; i++)
-                    Samples[i] = br.ReadSingle();
-            }
+            int count = br.ReadInt32();
+            int rate = br.ReadInt32();
+            if (count <= 0 || rate <= 0) return false;
 
-            // Load waveform
-            using (var fs = new System.IO.FileStream(wp, System.IO.FileMode.Open))
-            using (var br = new System.IO.BinaryReader(fs))
-            {
-                int len = br.ReadInt32();
-                SampleRateSmall = br.ReadInt32();
-                SamplesSmall = new float[len];
-                for (int i = 0; i < len; i++)
-                    SamplesSmall[i] = br.ReadSingle();
-            }
+            var small = new float[count];
+            for (int i = 0; i < count; i++)
+                small[i] = br.ReadSingle();
 
-            FilePath = audioPath;
-            Duration = TimeSpan.FromSeconds((double)Samples.Length / SampleRate);
-            Log.Info($"[INFO] Loaded from cache: {audioPath}, duration={Duration.TotalSeconds:F1}s");
+            SamplesSmall = small;
+            SampleRateSmall = rate;
             return true;
         }
-        catch { return false; }
+        catch
+        {
+            try { File.Delete(cacheFile); } catch { }
+            return false;
+        }
     }
+
+    /// <summary>Save SamplesSmall to binary cache file.</summary>
+    private void SaveWaveformCache(string audioPath)
+    {
+        if (SamplesSmall == null) return;
+        try
+        {
+            string cacheFile = GetCachePath(audioPath);
+            using var fs = new FileStream(cacheFile, FileMode.Create, FileAccess.Write);
+            using var bw = new BinaryWriter(fs);
+
+            bw.Write(SamplesSmall.Length);
+            bw.Write(SampleRateSmall);
+            for (int i = 0; i < SamplesSmall.Length; i++)
+                bw.Write(SamplesSmall[i]);
+
+            Log.Info($"[INFO] Waveform cache saved: {cacheFile} ({SamplesSmall.Length} samples)");
+        }
+        catch (Exception ex)
+        {
+            Log.Warn($"[WARN] Failed to save waveform cache: {ex.Message}");
+        }
+    }
+
+    /// <summary>Build SamplesSmall from full-resolution Samples.</summary>
+    private void BuildSamplesSmall(float[] allSamples)
+    {
+        SampleRateSmall = Math.Min(SampleRate, WAVEFORM_CACHE_RATE);
+        if (SampleRate > WAVEFORM_CACHE_RATE)
+        {
+            int factor = SampleRate / SampleRateSmall;
+            int smallLen = (allSamples.Length + factor - 1) / factor;
+            var small = new float[smallLen];
+            for (int i = 0; i < smallLen; i++)
+                small[i] = allSamples[Math.Min(i * factor, allSamples.Length - 1)];
+            SamplesSmall = small;
+            SampleRateSmall = SampleRate / factor;
+        }
+        else
+        {
+            SamplesSmall = (float[])allSamples.Clone();
+        }
+    }
+
+    // ── Full sample cache ──────────────────────────────────────────
+
+    private string GetSamplesCachePath(string audioPath)
+    {
+        string dir = Path.GetDirectoryName(audioPath) ?? ".";
+        string name = Path.GetFileNameWithoutExtension(audioPath);
+        return Path.Combine(dir, $"{name}.samples");
+    }
+
+    /// <summary>Try to load full Samples from binary cache. Returns true on success.</summary>
+    private bool LoadSamplesCache(string audioPath, out float[] samples, out int sampleRate)
+    {
+        samples = Array.Empty<float>();
+        sampleRate = 0;
+        string cacheFile = GetSamplesCachePath(audioPath);
+        if (!File.Exists(cacheFile)) return false;
+
+        // Stale check
+        if (File.GetLastWriteTimeUtc(cacheFile) < File.GetLastWriteTimeUtc(audioPath))
+        {
+            try { File.Delete(cacheFile); } catch { }
+            return false;
+        }
+
+        try
+        {
+            using var fs = new FileStream(cacheFile, FileMode.Open, FileAccess.Read);
+            using var br = new BinaryReader(fs);
+
+            int count = br.ReadInt32();
+            sampleRate = br.ReadInt32();
+            if (count <= 0 || sampleRate <= 0) return false;
+
+            samples = new float[count];
+            for (int i = 0; i < count; i++)
+                samples[i] = br.ReadSingle();
+
+            return true;
+        }
+        catch
+        {
+            try { File.Delete(cacheFile); } catch { }
+            return false;
+        }
+    }
+
+    /// <summary>Save full Samples to binary cache file.</summary>
+    private void SaveSamplesCache(string audioPath, float[] samples)
+    {
+        try
+        {
+            string cacheFile = GetSamplesCachePath(audioPath);
+            using var fs = new FileStream(cacheFile, FileMode.Create, FileAccess.Write);
+            using var bw = new BinaryWriter(fs);
+
+            bw.Write(samples.Length);
+            bw.Write(SampleRate);
+            for (int i = 0; i < samples.Length; i++)
+                bw.Write(samples[i]);
+
+            Log.Info($"[INFO] Full samples cache saved: {cacheFile} ({samples.Length} samples)");
+        }
+        catch (Exception ex)
+        {
+            Log.Warn($"[WARN] Failed to save samples cache: {ex.Message}");
+        }
+    }
+
+    /// <summary>Returns the full-quality sample array.</summary>
+    public float[]? GetSamples() => Samples;
 
     // ── Decode audio using MediaExtractor + MediaCodec ─────────────
 
@@ -546,7 +634,9 @@ public class AudioEngine : IDisposable
 
         StopPlaybackInternal();
 
-        float[] played = StretchSola(segmentSamples, PlaybackSpeed);
+        float[] played = Math.Abs(PlaybackSpeed - 1.0) < 0.005
+            ? (float[])segmentSamples.Clone()
+            : StretchSola(segmentSamples, PlaybackSpeed);
         short[] pcm = FloatsToPcm16(played);
         byte[] pcmBytes = ShortsToBytes(pcm);
 
@@ -576,7 +666,7 @@ public class AudioEngine : IDisposable
         _audioTrack.Write(pcmBytes, 0, pcmBytes.Length);
         _audioTrack.Play();
 
-        Log.Info($"[INFO] PlaySegment started, {segmentSamples.Length} samples, speed={PlaybackSpeed:F2}, stretched={played.Length} (SOLA)");
+        Log.Info($"[INFO] PlaySegment started, {segmentSamples.Length} samples, speed={PlaybackSpeed:F2}, stretched={played.Length}");
     }
 
     /// <summary>Pause playback, keeping position.</summary>

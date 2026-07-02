@@ -13,6 +13,12 @@ public partial class MenuPage : ContentPage
         RecentManager.Changed += () => Dispatcher.Dispatch(BuildRecentMenu);
     }
 
+    protected override bool OnBackButtonPressed()
+    {
+        _ = Shell.Current.GoToAsync("//player");
+        return true;
+    }
+
     // ── Navigation ─────────────────────────────────────────────────
 
     private async void OnPlayerTapped(object? sender, EventArgs e)

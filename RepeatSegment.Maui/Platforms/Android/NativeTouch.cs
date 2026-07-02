@@ -3,64 +3,71 @@ using Android.Views;
 
 namespace RepeatSegment.Maui;
 
-/// <summary>Native touch → pixel-relative coordinates for drag selection + pinch-zoom.</summary>
+/// <summary>Native touch → pixel-relative coordinates for drag selection + pinch detection.</summary>
 public static class NativeTouch
 {
-    public static event Action<float, float>? PinchStart;
-    public static event Action<float, float>? PinchEnd;
-
-    public static void Attach(Microsoft.Maui.Controls.BoxView box, Action<float, float, int> cb)
+    public static void Attach(Microsoft.Maui.Controls.BoxView box, Action<float, float, int> touchCb, Action<float>? pinchCb = null, Action? pinchStartCb = null, Action? pinchEndCb = null)
     {
-        void OnReady() { if (box.Handler?.PlatformView is Android.Views.View v) AttachNative(v, cb); }
+        void OnReady() { if (box.Handler?.PlatformView is Android.Views.View v) AttachNative(v, touchCb, pinchCb, pinchStartCb, pinchEndCb); }
         if (box.Handler != null) OnReady(); else box.HandlerChanged += (_, _) => OnReady();
     }
-    static void AttachNative(Android.Views.View v, Action<float, float, int> cb)
+    static void AttachNative(Android.Views.View v, Action<float, float, int> touchCb, Action<float>? pinchCb, Action? pinchStartCb, Action? pinchEndCb)
     {
         v.Clickable = true; v.Focusable = true;
-        v.SetOnTouchListener(new TL(cb, v));
+        v.SetOnTouchListener(new TL(touchCb, pinchCb, pinchStartCb, pinchEndCb, v));
     }
     class TL : Java.Lang.Object, Android.Views.View.IOnTouchListener
     {
-        readonly Action<float, float, int> _cb;
+        readonly Action<float, float, int> _touchCb;
+        readonly Action<float>? _pinchCb;
+        readonly Action? _pinchStartCb, _pinchEndCb;
         readonly Android.Views.View _v;
+        private float _pinchBaseDist;
         private bool _pinching;
-        private float _cumulativeScale = 1f;
 
-        public TL(Action<float, float, int> cb, Android.Views.View v) { _cb = cb; _v = v; }
+        public TL(Action<float, float, int> touchCb, Action<float>? pinchCb, Action? pinchStartCb, Action? pinchEndCb, Android.Views.View v)
+        { _touchCb = touchCb; _pinchCb = pinchCb; _pinchStartCb = pinchStartCb; _pinchEndCb = pinchEndCb; _v = v; }
+
         public bool OnTouch(Android.Views.View? v, MotionEvent? e)
         {
             if (e == null) return false;
+            int pc = e.PointerCount;
 
-            if (e.PointerCount >= 2)
+            if (pc >= 2 && _pinchCb != null)
             {
-                // Pinch-zoom — calculate span ratio
+                // Multi-touch: suppress single-finger selection, compute pinch scale
                 if (!_pinching)
                 {
                     _pinching = true;
-                    _cumulativeScale = 1f;
-                    float cx = (e.GetX(0) + e.GetX(1)) / 2f;
-                    float cy = (e.GetY(0) + e.GetY(1)) / 2f;
-                    PinchStart?.Invoke(cx, cy);
+                    _pinchStartCb?.Invoke(); // notify — hide loupe, cancel selection
                 }
+                if (_v.Parent != null) _v.Parent.RequestDisallowInterceptTouchEvent(true);
+
                 float dx = e.GetX(0) - e.GetX(1);
                 float dy = e.GetY(0) - e.GetY(1);
-                float span = (float)System.Math.Sqrt(dx * dx + dy * dy);
-                // Simplified: use span relative to 300px baseline
-                _cumulativeScale = System.Math.Clamp(span / 300f, 0.5f, 3f);
-                _cb(_cumulativeScale, 0f, 3); // action=3 → pinch scale
+                float dist = (float)Math.Sqrt(dx * dx + dy * dy);
+
+                var a = e.ActionMasked;
+                if (a == MotionEventActions.PointerDown || a == MotionEventActions.Down)
+                {
+                    _pinchBaseDist = dist;
+                }
+                else if (a == MotionEventActions.Move && _pinchBaseDist > 0)
+                {
+                    // Cumulative scale from initial distance — NOT resetting base for smooth slow movements
+                    float scale = dist / _pinchBaseDist;
+                    _pinchCb(scale);
+                }
                 return true;
             }
-            if (_pinching)
-            {
-                _pinching = false;
-                float cx = e.GetX(), cy = e.GetY();
-                PinchEnd?.Invoke(cx, cy);
-            }
 
-            int a = e.ActionMasked switch { MotionEventActions.Down => 0, MotionEventActions.Move => 1, MotionEventActions.Up or MotionEventActions.Cancel => 2, _ => -1 };
-            if (a < 0) return false;
-            if (a == 0 && _v.Parent != null) _v.Parent.RequestDisallowInterceptTouchEvent(true);
-            _cb(e.GetX(), e.GetY(), a);
+            // Single finger: normal selection if not in pinch mode
+            int sa = e.ActionMasked switch { MotionEventActions.Down => 0, MotionEventActions.Move => 1, MotionEventActions.Up or MotionEventActions.Cancel => 2, _ => -1 };
+            if (sa < 0) return false;
+            if (_pinching && sa == 2) { _pinching = false; _pinchEndCb?.Invoke(); return true; }
+            if (_pinching) return true; // suppress single-finger events during pinch
+            if (sa == 0 && _v.Parent != null) _v.Parent.RequestDisallowInterceptTouchEvent(true);
+            _touchCb(e.GetX(), e.GetY(), sa);
             return true;
         }
     }

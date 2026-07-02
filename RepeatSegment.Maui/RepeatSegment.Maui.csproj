@@ -17,6 +17,7 @@
     <AndroidUseAssemblyStore>true</AndroidUseAssemblyStore>
     <AndroidStoreUncompressedFileExtensions>.so</AndroidStoreUncompressedFileExtensions>
     <AndroidEnable16KPageAlignment>false</AndroidEnable16KPageAlignment>
+    <NoWarn>CA1416;CA1422</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -50,9 +51,5 @@
     <Compile Include="..\..\RepeatSegment\RepeatSegment.App\AnkiBuilder.cs" Link="Shared\AnkiBuilder.cs" />
     <Compile Include="..\..\RepeatSegment\RepeatSegment.App\AnkiExportManager.cs" Link="Shared\AnkiExportManager.cs" />
   </ItemGroup>
-
-  <PropertyGroup>
-    <NoWarn>CA1416;CA1422</NoWarn>
-  </PropertyGroup>
 
 </Project>

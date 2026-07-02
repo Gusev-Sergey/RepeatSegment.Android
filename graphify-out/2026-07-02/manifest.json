@@ -1,0 +1,382 @@
+{
+  "RepeatSegment.Droid/MainActivity.cs": {
+    "mtime": 1782589793.399875,
+    "ast_hash": "e4c8ec46d3b6cf709658234a15b4a246",
+    "semantic_hash": "e4c8ec46d3b6cf709658234a15b4a246"
+  },
+  "RepeatSegment.Droid/RepeatSegment.Android.csproj": {
+    "mtime": 1782589719.9483356,
+    "ast_hash": "29b5786253b44f0c0e4a3da51307a279",
+    "semantic_hash": "29b5786253b44f0c0e4a3da51307a279"
+  },
+  "RepeatSegment.Maui/App.xaml.cs": {
+    "mtime": 1782711313.5946684,
+    "ast_hash": "c1afde24c6536f79064fed585aab3458",
+    "semantic_hash": "c1afde24c6536f79064fed585aab3458"
+  },
+  "RepeatSegment.Maui/AppShell.xaml.cs": {
+    "mtime": 1782933860.7988822,
+    "ast_hash": "0a3069ff98c7250691a150157968a892",
+    "semantic_hash": ""
+  },
+  "RepeatSegment.Maui/MainPage.xaml.cs": {
+    "mtime": 1782589166.4656003,
+    "ast_hash": "d4d313358f74c2c9dbcf23920ac4a8b9",
+    "semantic_hash": "d4d313358f74c2c9dbcf23920ac4a8b9"
+  },
+  "RepeatSegment.Maui/MauiProgram.cs": {
+    "mtime": 1782751986.1858013,
+    "ast_hash": "3fe842fd200a937bc2ffbfdb6ad6db05",
+    "semantic_hash": "3fe842fd200a937bc2ffbfdb6ad6db05"
+  },
+  "RepeatSegment.Maui/Pages/MenuPage.xaml.cs": {
+    "mtime": 1782934887.419023,
+    "ast_hash": "08c3a4607d4706038dd789841a5832e5",
+    "semantic_hash": ""
+  },
+  "RepeatSegment.Maui/Pages/PlayerPage.xaml.cs": {
+    "mtime": 1783017443.5205204,
+    "ast_hash": "7473224d6144b650309c3616688ce9a6",
+    "semantic_hash": ""
+  },
+  "RepeatSegment.Maui/Pages/SettingsPage.xaml.cs": {
+    "mtime": 1783017498.149863,
+    "ast_hash": "c267fef0f4c2583b1936be964cc7e27a",
+    "semantic_hash": ""
+  },
+  "RepeatSegment.Maui/Platforms/Android/MainActivity.cs": {
+    "mtime": 1782934887.4220142,
+    "ast_hash": "5395e23e9c1ed31bd732e84a7c45d223",
+    "semantic_hash": ""
+  },
+  "RepeatSegment.Maui/Platforms/Android/MainApplication.cs": {
+    "mtime": 1782588663.3210864,
+    "ast_hash": "846025a748ad5ce840fdecdaba9379bc",
+    "semantic_hash": "846025a748ad5ce840fdecdaba9379bc"
+  },
+  "RepeatSegment.Maui/Platforms/MacCatalyst/AppDelegate.cs": {
+    "mtime": 1782588663.3441696,
+    "ast_hash": "103c3014eca414e8272869f800481d12",
+    "semantic_hash": "103c3014eca414e8272869f800481d12"
+  },
+  "RepeatSegment.Maui/Platforms/MacCatalyst/Program.cs": {
+    "mtime": 1782588663.3653176,
+    "ast_hash": "293a6bcd15ad1afef958408a1a6c4526",
+    "semantic_hash": "293a6bcd15ad1afef958408a1a6c4526"
+  },
+  "RepeatSegment.Maui/Platforms/Tizen/Main.cs": {
+    "mtime": 1782588663.3663177,
+    "ast_hash": "0fa6f815237f9533bbcef09088306a6f",
+    "semantic_hash": "0fa6f815237f9533bbcef09088306a6f"
+  },
+  "RepeatSegment.Maui/Platforms/Windows/App.xaml.cs": {
+    "mtime": 1782588663.38099,
+    "ast_hash": "3bfc7b1aae25f591733923dc443afe79",
+    "semantic_hash": "3bfc7b1aae25f591733923dc443afe79"
+  },
+  "RepeatSegment.Maui/Platforms/iOS/AppDelegate.cs": {
+    "mtime": 1782588663.323085,
+    "ast_hash": "103c3014eca414e8272869f800481d12",
+    "semantic_hash": "103c3014eca414e8272869f800481d12"
+  },
+  "RepeatSegment.Maui/Platforms/iOS/Program.cs": {
+    "mtime": 1782588663.3250864,
+    "ast_hash": "293a6bcd15ad1afef958408a1a6c4526",
+    "semantic_hash": "293a6bcd15ad1afef958408a1a6c4526"
+  },
+  "RepeatSegment.Maui/Properties/launchSettings.json": {
+    "mtime": 1782588663.3849962,
+    "ast_hash": "4e57b643958c5bf8b3edc47dc24a9cec",
+    "semantic_hash": "4e57b643958c5bf8b3edc47dc24a9cec"
+  },
+  "RepeatSegment.Maui/RepeatSegment.Maui.csproj": {
+    "mtime": 1782934887.4240499,
+    "ast_hash": "34101f36ea0ba3dc4849cec68de5530b",
+    "semantic_hash": ""
+  },
+  "RepeatSegment.Maui/Services/AudioEngine.cs": {
+    "mtime": 1782934887.4252994,
+    "ast_hash": "059c741e6ac85e07bd82d87f44941a2b",
+    "semantic_hash": ""
+  },
+  "RepeatSegment.Maui/Services/PlaybackService.cs": {
+    "mtime": 1782934887.4265745,
+    "ast_hash": "3d809db848755c488d78f02ea0a9b36a",
+    "semantic_hash": ""
+  },
+  "RepeatSegment.Maui/Services/RecentManager.cs": {
+    "mtime": 1782657727.4774132,
+    "ast_hash": "f089926a25f377f60a837e039c74fd32",
+    "semantic_hash": "f089926a25f377f60a837e039c74fd32"
+  },
+  "RepeatSegment.Maui/build_release.ps1": {
+    "mtime": 1782592885.6697228,
+    "ast_hash": "8f63b2f9d583a896abdd8d0d2799e14c",
+    "semantic_hash": "8f63b2f9d583a896abdd8d0d2799e14c"
+  },
+  "RepeatSegment.Native/MainActivity.cs": {
+    "mtime": 1782585013.304706,
+    "ast_hash": "0e984046971b62b694fa3ab8d4d11340",
+    "semantic_hash": "0e984046971b62b694fa3ab8d4d11340"
+  },
+  "RepeatSegment.Native/RepeatSegment.Native.csproj": {
+    "mtime": 1782585010.783417,
+    "ast_hash": "33d80fbe90696a068fcd7bef3aaff14b",
+    "semantic_hash": "33d80fbe90696a068fcd7bef3aaff14b"
+  },
+  ".opencode/opencode.json": {
+    "mtime": 1782931582.2151992,
+    "ast_hash": "f2ae21510d07365eb2bce8159272c7a0",
+    "semantic_hash": "f2ae21510d07365eb2bce8159272c7a0"
+  },
+  ".opencode/plugins/graphify.js": {
+    "mtime": 1782931582.2151992,
+    "ast_hash": "111287aed37970b605d3ab422d1c93ec",
+    "semantic_hash": "111287aed37970b605d3ab422d1c93ec"
+  },
+  "RepeatSegment.Maui/Platforms/Android/NativeMagnifier.cs": {
+    "mtime": 1782934887.4220142,
+    "ast_hash": "193f384029ddaaabcd97ad92010bc8d7",
+    "semantic_hash": ""
+  },
+  "RepeatSegment.Maui/Platforms/Android/NativeTouch.cs": {
+    "mtime": 1782934887.4230392,
+    "ast_hash": "3ff6c46ce76ac74a90468325a7f3ebfa",
+    "semantic_hash": ""
+  },
+  "AGENTS.md": {
+    "mtime": 1782931582.2161973,
+    "ast_hash": "752aa83aa64361ac32860f882dcff932",
+    "semantic_hash": ""
+  },
+  "MAUI_DEBUG_NOTES.md": {
+    "mtime": 1782931582.2171974,
+    "ast_hash": "c149e4b57a36d8d98c6f08d21f78cb30",
+    "semantic_hash": "c149e4b57a36d8d98c6f08d21f78cb30"
+  },
+  "PLAN_PORTING.md": {
+    "mtime": 1782932694.582066,
+    "ast_hash": "0bce678b4e6fddd30779de6ebe8479ca",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1782573737.9294796,
+    "ast_hash": "7edd6c6f23fb703d607268f01544aff3",
+    "semantic_hash": "7edd6c6f23fb703d607268f01544aff3"
+  },
+  "RESUME_FOR_NEW_CHAT.md": {
+    "mtime": 1783017063.8339622,
+    "ast_hash": "616dd415a9d467ab15b2b4817c67672a",
+    "semantic_hash": ""
+  },
+  "RepeatSegment.Droid/Resources/AboutResources.txt": {
+    "mtime": 1782589614.262067,
+    "ast_hash": "c9804b277011b097be6d1be8b9f61b87",
+    "semantic_hash": "c9804b277011b097be6d1be8b9f61b87"
+  },
+  "RepeatSegment.Maui/Resources/Raw/AboutAssets.txt": {
+    "mtime": 1782588663.4025383,
+    "ast_hash": "f2a9b40b175b413ea2fc7421ee26c6a5",
+    "semantic_hash": "f2a9b40b175b413ea2fc7421ee26c6a5"
+  },
+  "build_log.txt": {
+    "mtime": 1782814718.4553673,
+    "ast_hash": "c608197c49af2b8c3b1dbb9c5dd8f60f",
+    "semantic_hash": "c608197c49af2b8c3b1dbb9c5dd8f60f"
+  },
+  "plans/selection_bugs_root_cause.md": {
+    "mtime": 1782931582.3005111,
+    "ast_hash": "a1b7241e43f4529fe93fe57e1c6fb065",
+    "semantic_hash": ""
+  },
+  "RepeatSegment.Droid/Resources/mipmap-hdpi/appicon.png": {
+    "mtime": 1782589614.2836347,
+    "ast_hash": "b4a712acfad46472870d5de770d8a3f9",
+    "semantic_hash": "b4a712acfad46472870d5de770d8a3f9"
+  },
+  "RepeatSegment.Droid/Resources/mipmap-hdpi/appicon_background.png": {
+    "mtime": 1782589614.284637,
+    "ast_hash": "c2d45fe3c51f12cf2019d46283befef0",
+    "semantic_hash": "c2d45fe3c51f12cf2019d46283befef0"
+  },
+  "RepeatSegment.Droid/Resources/mipmap-hdpi/appicon_foreground.png": {
+    "mtime": 1782589614.284637,
+    "ast_hash": "4ec1badae0578f5e09722548965d0eb2",
+    "semantic_hash": "4ec1badae0578f5e09722548965d0eb2"
+  },
+  "RepeatSegment.Droid/Resources/mipmap-mdpi/appicon.png": {
+    "mtime": 1782589614.2860415,
+    "ast_hash": "055c80452d530e596b91699692d878a8",
+    "semantic_hash": "055c80452d530e596b91699692d878a8"
+  },
+  "RepeatSegment.Droid/Resources/mipmap-mdpi/appicon_background.png": {
+    "mtime": 1782589614.2860415,
+    "ast_hash": "d3fc76a6b49062798a23051e7d9a6dda",
+    "semantic_hash": "d3fc76a6b49062798a23051e7d9a6dda"
+  },
+  "RepeatSegment.Droid/Resources/mipmap-mdpi/appicon_foreground.png": {
+    "mtime": 1782589614.2870414,
+    "ast_hash": "0cc9e852c3b7f43a1ae57917f2f9d3f6",
+    "semantic_hash": "0cc9e852c3b7f43a1ae57917f2f9d3f6"
+  },
+  "RepeatSegment.Droid/Resources/mipmap-xhdpi/appicon.png": {
+    "mtime": 1782589614.2880404,
+    "ast_hash": "ac37d8e5500a8c95fc8e0d7961d99373",
+    "semantic_hash": "ac37d8e5500a8c95fc8e0d7961d99373"
+  },
+  "RepeatSegment.Droid/Resources/mipmap-xhdpi/appicon_background.png": {
+    "mtime": 1782589614.2880404,
+    "ast_hash": "e73d8191ad647bbd068d55619602eb42",
+    "semantic_hash": "e73d8191ad647bbd068d55619602eb42"
+  },
+  "RepeatSegment.Droid/Resources/mipmap-xhdpi/appicon_foreground.png": {
+    "mtime": 1782589614.289042,
+    "ast_hash": "2dd971216f9a8c79603d50259f929c3a",
+    "semantic_hash": "2dd971216f9a8c79603d50259f929c3a"
+  },
+  "RepeatSegment.Droid/Resources/mipmap-xxhdpi/appicon.png": {
+    "mtime": 1782589614.289042,
+    "ast_hash": "98acc62603565752259a01a17fe7fc64",
+    "semantic_hash": "98acc62603565752259a01a17fe7fc64"
+  },
+  "RepeatSegment.Droid/Resources/mipmap-xxhdpi/appicon_background.png": {
+    "mtime": 1782589614.2900438,
+    "ast_hash": "eb5e7fcc6fb3d067c44f450e321d276b",
+    "semantic_hash": "eb5e7fcc6fb3d067c44f450e321d276b"
+  },
+  "RepeatSegment.Droid/Resources/mipmap-xxhdpi/appicon_foreground.png": {
+    "mtime": 1782589614.2900438,
+    "ast_hash": "cf14da236fc647c8e200dde1fa93dd89",
+    "semantic_hash": "cf14da236fc647c8e200dde1fa93dd89"
+  },
+  "RepeatSegment.Droid/Resources/mipmap-xxxhdpi/appicon.png": {
+    "mtime": 1782589614.236009,
+    "ast_hash": "e35eb3d1d06ecfdf4a4631f4893d3be5",
+    "semantic_hash": "e35eb3d1d06ecfdf4a4631f4893d3be5"
+  },
+  "RepeatSegment.Droid/Resources/mipmap-xxxhdpi/appicon_background.png": {
+    "mtime": 1782589614.2370188,
+    "ast_hash": "308dee7de37394d21789c5dbaa2abe93",
+    "semantic_hash": "308dee7de37394d21789c5dbaa2abe93"
+  },
+  "RepeatSegment.Droid/Resources/mipmap-xxxhdpi/appicon_foreground.png": {
+    "mtime": 1782589614.2380195,
+    "ast_hash": "70e7d054c2ae109cf08e54ac096710eb",
+    "semantic_hash": "70e7d054c2ae109cf08e54ac096710eb"
+  },
+  "RepeatSegment.Maui/Platforms/Android/Resources/mipmap-xxxhdpi/ic_launcher.png": {
+    "mtime": 1782592883.1052594,
+    "ast_hash": "ea20bfec728fa03643ea45ba2139e5ae",
+    "semantic_hash": "ea20bfec728fa03643ea45ba2139e5ae"
+  },
+  "RepeatSegment.Maui/Platforms/Android/Resources/mipmap-xxxhdpi/ic_launcher_round.png": {
+    "mtime": 1782592883.1052594,
+    "ast_hash": "ea20bfec728fa03643ea45ba2139e5ae",
+    "semantic_hash": "ea20bfec728fa03643ea45ba2139e5ae"
+  },
+  "RepeatSegment.Maui/Resources/AppIcon/appicon.png": {
+    "mtime": 1782651901.294747,
+    "ast_hash": "bdd66f487b3bb09f18650f3647ea00a8",
+    "semantic_hash": "bdd66f487b3bb09f18650f3647ea00a8"
+  },
+  "RepeatSegment.Maui/Resources/Images/dotnet_bot.png": {
+    "mtime": 1782588663.3980129,
+    "ast_hash": "9fc4808064d8c61c81b9713a7f55019d",
+    "semantic_hash": "9fc4808064d8c61c81b9713a7f55019d"
+  },
+  "RepeatSegment.Maui/Resources/Images/first.png": {
+    "mtime": 1781937180.6980107,
+    "ast_hash": "302d1b1f3de801762ee6620e5f0b99c5",
+    "semantic_hash": "302d1b1f3de801762ee6620e5f0b99c5"
+  },
+  "RepeatSegment.Maui/Resources/Images/last.png": {
+    "mtime": 1781937124.6129088,
+    "ast_hash": "7d10e4ac22d8de0bc9267f043d55c9a5",
+    "semantic_hash": "7d10e4ac22d8de0bc9267f043d55c9a5"
+  },
+  "RepeatSegment.Maui/Resources/Images/next_play.png": {
+    "mtime": 1781937190.4726944,
+    "ast_hash": "e9287eeee09d1e8373d637d1d3c08618",
+    "semantic_hash": "e9287eeee09d1e8373d637d1d3c08618"
+  },
+  "RepeatSegment.Maui/Resources/Images/play.png": {
+    "mtime": 1781937247.0934753,
+    "ast_hash": "eb97aaec1361a463ec54419535163896",
+    "semantic_hash": "eb97aaec1361a463ec54419535163896"
+  },
+  "RepeatSegment.Maui/Resources/Images/play_go.png": {
+    "mtime": 1781937234.571481,
+    "ast_hash": "e1400d4d3a98f1a056c5be04aad22656",
+    "semantic_hash": "e1400d4d3a98f1a056c5be04aad22656"
+  },
+  "RepeatSegment.Maui/Resources/Images/pre_play.png": {
+    "mtime": 1781938401.7704268,
+    "ast_hash": "1ac9832452f671adb65553249e4c9a4b",
+    "semantic_hash": "1ac9832452f671adb65553249e4c9a4b"
+  },
+  "RepeatSegment.Maui/Resources/Images/repeat.png": {
+    "mtime": 1781937228.3337545,
+    "ast_hash": "1f1c329590935e075e507f944520d441",
+    "semantic_hash": "1f1c329590935e075e507f944520d441"
+  },
+  "RepeatSegment.Maui/Resources/Images/stop_play.png": {
+    "mtime": 1781937220.5320783,
+    "ast_hash": "a76fd098f1e14b063a5eab616996def0",
+    "semantic_hash": "a76fd098f1e14b063a5eab616996def0"
+  },
+  "RepeatSegment.Maui/Resources/mipmap-hdpi/appicon.png": {
+    "mtime": 1781100562.6129832,
+    "ast_hash": "fa582f3ad5ac269f5a977e66424275f3",
+    "semantic_hash": "fa582f3ad5ac269f5a977e66424275f3"
+  },
+  "RepeatSegment.Maui/Resources/mipmap-mdpi/appicon.png": {
+    "mtime": 1781100562.6129832,
+    "ast_hash": "fa582f3ad5ac269f5a977e66424275f3",
+    "semantic_hash": "fa582f3ad5ac269f5a977e66424275f3"
+  },
+  "RepeatSegment.Maui/Resources/mipmap-xhdpi/appicon.png": {
+    "mtime": 1781100562.6129832,
+    "ast_hash": "fa582f3ad5ac269f5a977e66424275f3",
+    "semantic_hash": "fa582f3ad5ac269f5a977e66424275f3"
+  },
+  "RepeatSegment.Maui/Resources/mipmap-xxhdpi/appicon.png": {
+    "mtime": 1781100562.6129832,
+    "ast_hash": "fa582f3ad5ac269f5a977e66424275f3",
+    "semantic_hash": "fa582f3ad5ac269f5a977e66424275f3"
+  },
+  "RepeatSegment.Maui/Resources/mipmap-xxxhdpi/appicon.png": {
+    "mtime": 1781100562.6129832,
+    "ast_hash": "fa582f3ad5ac269f5a977e66424275f3",
+    "semantic_hash": "fa582f3ad5ac269f5a977e66424275f3"
+  },
+  "BUGFIND_LOG.md": {
+    "mtime": 1782931582.2171974,
+    "ast_hash": "d15265f95fb694bf12acf957cd2c14d4",
+    "semantic_hash": ""
+  },
+  "RepeatSegment.Maui/Pages/AnkiCardPage.xaml.cs": {
+    "mtime": 1783016186.2351308,
+    "ast_hash": "aa832fbdb70b08cc2169adcea2b29480",
+    "semantic_hash": ""
+  },
+  "RepeatSegment.Maui/Pages/ImageSearchPage.xaml.cs": {
+    "mtime": 1782974597.2966728,
+    "ast_hash": "7d65d35ab6c3499a281d895d22a2c3c1",
+    "semantic_hash": ""
+  },
+  "RECOVERY_LOG.md": {
+    "mtime": 1783016663.491278,
+    "ast_hash": "a41b80e745d7773af035958682178823",
+    "semantic_hash": ""
+  },
+  "plans/anki_card_page_v01.md": {
+    "mtime": 1782933477.650535,
+    "ast_hash": "639d4d77d5fb257ca5de9ca2b748f33b",
+    "semantic_hash": ""
+  },
+  "WAVEFORM.md": {
+    "mtime": 1783017029.4258516,
+    "ast_hash": "14a60e4b1204d6af4ec7d9a0dada0161",
+    "semantic_hash": ""
+  }
+}

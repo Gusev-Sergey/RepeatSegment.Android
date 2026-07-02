@@ -33,7 +33,7 @@
 | 2 | AudioEngine rewrite | ✅ |
 | 3 | Player: waveform, slider, 5 кнопок | ✅ (7 кнопок + speed/volume) |
 | 4 | Transcription: текст | ✅ (inline Label) |
-| 5 | Translation: выделение → перевод | ❌ |
+| 5 | Translation: выделение → перевод | ✅ |
 | 6 | Settings: API keys screen | ✅ |
 | 7 | AnkiCard: basic card creation | ❌ |
 

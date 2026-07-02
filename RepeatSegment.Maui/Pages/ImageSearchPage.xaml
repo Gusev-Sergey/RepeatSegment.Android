@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RepeatSegment.Maui.Pages.ImageSearchPage"
+             Title="Image Search"
+             BackgroundColor="#121212"
+             Shell.NavBarIsVisible="True"
+             Shell.BackgroundColor="#1E1E1E"
+             Shell.ForegroundColor="#E0E0E0"
+             Shell.TitleColor="#E0E0E0">
+
+    <Grid RowDefinitions="Auto,*,Auto" Padding="0">
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto" Padding="8,6" BackgroundColor="#1A1A2E" ColumnSpacing="6">
+            <Entry Grid.Column="0" x:Name="TxtQuery" Placeholder="Search images..." PlaceholderColor="#666"
+                   TextColor="#E0E0E0" BackgroundColor="#2A2A3E" FontSize="14" />
+            <Button Grid.Column="1" x:Name="BtnSearch" Text="Search" FontSize="13"
+                    Clicked="OnSearchClicked"
+                    BackgroundColor="#00B4A6" TextColor="White" CornerRadius="6"
+                    HeightRequest="36" Padding="10,0" />
+            <Button Grid.Column="2" x:Name="BtnUse" Text="✓ Use" FontSize="13"
+                    Clicked="OnUseClicked"
+                    BackgroundColor="#1E3A5F" TextColor="#00B4A6" CornerRadius="6"
+                    HeightRequest="36" Padding="10,0" />
+        </Grid>
+
+        <WebView x:Name="ImageBrowser" Grid.Row="1" />
+
+        <Label Grid.Row="2" x:Name="LblStatus" Text="Click an image, then ✓ Use"
+               TextColor="#888" FontSize="11" Padding="12,6"
+               BackgroundColor="#1A1A2E" />
+    </Grid>
+</ContentPage>

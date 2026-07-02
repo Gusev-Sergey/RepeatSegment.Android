@@ -1,51 +1,42 @@
-# RepeatSegment — Resume for New Chat (June 30, 2026, 23:50 YEKT)
+# RepeatSegment Android — Resume for New Chat (July 2, 2026)
 
-## Project Status
-MAUI Android приложение работает. Ключевой функционал выделения текста и лупы реализован и стабилен.
+## What's New (July 1-2 session)
+- **AnkiCardPage v0.1** — full card UI + image search + TTS + mic recording + .apkg export
+- **Open Decks button** solved: two-step Intent (DocumentsUI → DownloadManager fallback)
+- See [`RECOVERY_LOG.md`](RECOVERY_LOG.md) for full history
 
-## Architecture Overview
-- **Проект**: [`RepeatSegment.Maui/`](RepeatSegment.Maui/) — MAUI Android (.NET 9)
-- **Бизнес-логика**: 8 shared .cs файлов из WPF проекта
-- **UI**: PlayerPage со всем функционалом в одном файле
-
-## Key Files (Current State)
-
-| File | Purpose |
-|------|---------|
-| [`PlayerPage.xaml`](RepeatSegment.Maui/Pages/PlayerPage.xaml) | UI: waveform, кнопки, транскрипция, лупа, панель перевода |
-| [`PlayerPage.xaml.cs`](RepeatSegment.Maui/Pages/PlayerPage.xaml.cs) | Вся логика: playback, транскрипция, выделение, лупа, перевод |
-| [`NativeTouch.cs`](RepeatSegment.Maui/Platforms/Android/NativeTouch.cs) | Нативный Android TouchListener для drag-выделения |
-| [`NativeMagnifier.cs`](RepeatSegment.Maui/Platforms/Android/NativeMagnifier.cs) | Скриншот TextView для лупы с ×1.3 увеличением |
-| [`AudioEngine.cs`](RepeatSegment.Maui/Services/AudioEngine.cs) | MediaExtractor + AudioTrack |
-
-## Selection System (Current)
-- **Character-level**: `_selStartChar`, `_selEndChar` — индексы символов
-- **Anchor-based**: `_selAnchorChar` фиксируется при Down, диапазон расширяется от якоря
-- **Highlights**: синий (`#2A5A9B`) для выделения, золотой (`#FFD700`) для проигрывания
-- **Loupe**: 180×180 pixel круглый Border + NativeMagnifier.Capture с ×1.3 zoom
-- **Position**: лупа над пальцем, не перекрывает TranslationPanel
-
-## Translation
-- `TranslationProvider.TranslateEnRu(text)` — Google Translate (бесплатный) + Yandex fallback
-- API ключи в ConfigManager (`YandexTranslateApiKey`, `TranslationProviderPreference`)
-
-## Build Commands
+## Quick Start
 ```powershell
-# Сборка Release
+# Build
 powershell -ExecutionPolicy Bypass -File "C:\ProjectsCSharp\RepeatSegment.Android\RepeatSegment.Maui\build_release.ps1"
-
-# Установка
+# Install
 %LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe install -g -r "C:\ProjectsCSharp\RepeatSegment.Android\RepeatSegment.Maui\bin\Release\net9.0-android\com.astrorumarbor.repeatsegment-Signed.apk"
-
-# Запуск
-%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe shell monkey -p com.astrorumarbor.repeatsegment -c android.intent.category.LAUNCHER 1
 ```
 
-## TODO (Next Priorities)
-1. Переключение режима выделения: по буквам / по словам
-2. Pinch-to-zoom для изменения шрифта транскрипции
-3. AnkiCardPage
-4. Локализация UI (из WPF lang/*.json)
+## Key Files
+| File | Purpose |
+|------|---------|
+| [`PlayerPage.xaml.cs`](RepeatSegment.Maui/Pages/PlayerPage.xaml.cs) | Playback, selection, loupe, translation, CleanWord(), OnAnkiClicked |
+| [`AnkiCardPage.xaml.cs`](RepeatSegment.Maui/Pages/AnkiCardPage.xaml.cs) | Card UI, IPA, TTS, mic record, AnkiExportManager, Open decks |
+| [`ImageSearchPage.xaml.cs`](RepeatSegment.Maui/Pages/ImageSearchPage.xaml.cs) | Full-screen WebView (Google/Yandex) + JS injection |
+| [`AudioEngine.cs`](RepeatSegment.Maui/Services/AudioEngine.cs) | MediaExtractor + AudioTrack, .samples/.waveform cache, SOLA stretch |
+| [`NativeTouch.cs`](RepeatSegment.Maui/Platforms/Android/NativeTouch.cs) | TouchListener + pinch-zoom |
+| [`NativeMagnifier.cs`](RepeatSegment.Maui/Platforms/Android/NativeMagnifier.cs) | Loupe via View.Draw, native ImageView |
+| [`PlaybackService.cs`](RepeatSegment.Maui/Services/PlaybackService.cs) | Foreground service + notification |
+| [`AppShell.xaml.cs`](RepeatSegment.Maui/AppShell.xaml.cs) | Routes: player, menu, settings, ankiCard |
 
-## Bug Log
-See [`BUGFIND_LOG.md`](BUGFIND_LOG.md) for detailed bug history and root causes.
+## Shared files (from WPF)
+8 files linked via csproj: SilenceDetector, TranscriptionProvider, TranslationProvider, TtsProvider, ConfigManager, Strings, AnkiBuilder, AnkiExportManager
+
+## Known Issues
+1. Deepgram transcription not working on Android (works on WPF)
+2. Mic recording saves MP4 (AAC), Anki needs MP3
+3. Google Images WebView may show captcha on mobile
+
+## Documentation
+- [`BUGFIND_LOG.md`](BUGFIND_LOG.md) — all bugs with root cause analysis
+- [`RECOVERY_LOG.md`](RECOVERY_LOG.md) — git recovery + Open button battle (7 iterations + solution)
+- [`MAUI_DEBUG_NOTES.md`](MAUI_DEBUG_NOTES.md) — Android porting critical findings (SkiaSharp, 16KB pages, etc.)
+- [`PLAN_PORTING.md`](PLAN_PORTING.md) — WPF→MAUI migration matrix
+- [`WAVEFORM.md`](WAVEFORM.md) — waveform smooth rendering: diagnosis, attack plan, solution
+- [`plans/anki_card_page_v01.md`](plans/anki_card_page_v01.md) — AnkiCardPage implementation plan
