@@ -39,4 +39,28 @@ powershell -ExecutionPolicy Bypass -File "C:\ProjectsCSharp\RepeatSegment.Androi
 - [`MAUI_DEBUG_NOTES.md`](MAUI_DEBUG_NOTES.md) — Android porting critical findings (SkiaSharp, 16KB pages, etc.)
 - [`PLAN_PORTING.md`](PLAN_PORTING.md) — WPF→MAUI migration matrix
 - [`WAVEFORM.md`](WAVEFORM.md) — waveform smooth rendering: diagnosis, attack plan, solution
-- [`plans/anki_card_page_v01.md`](plans/anki_card_page_v01.md) — AnkiCardPage implementation plan
+
+## Push to GitHub (secrets handling)
+
+**API keys must stay LOCAL — NEVER pushed to GitHub.** GitHub Push Protection blocks commits containing secrets.
+
+### Setup: git attribute filter
+```bash
+# Run once per clone:
+git config filter.strip_secrets.clean "sed -e 's/=.*/= \"\";/g' -e 's/ = .*/ = \"\";/g'"
+git config filter.strip_secrets.smudge cat
+echo "PlayerPage.xaml.cs filter=strip_secrets" >> .git/info/attributes
+echo "SettingsPage.xaml.cs filter=strip_secrets" >> .git/info/attributes
+```
+
+### Before push checklist
+1. **Check**: `git diff --cached` — no API keys in staged changes
+2. **Commit**: `git commit -m "message"`
+3. **If blocked by push protection** — keys are in earlier commits. Squash history:
+   ```bash
+   git reset --soft <last_clean_commit>
+   git add -A
+   git commit -m "combined commit"
+   git push origin master --force
+   ```
+4. **After push**: restore API keys locally from `config.ini` backup
